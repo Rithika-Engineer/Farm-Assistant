@@ -13,6 +13,18 @@ import Videos from "../screens/Videos";
 import Schemes from "../screens/Schemes";
 import PestControl from "../screens/PestControl";
 import Jobs from "../screens/Jobs";
+import Chatbot from "../screens/Chatbot";
+import VoiceChat from "../screens/VoiceChat";
+import CropPlanner from "../screens/CropPlanner";
+import SeasonCrops from "../screens/SeasonCrops";
+
+
+
+
+
+
+
+
 
 
 
@@ -43,6 +55,12 @@ export default function AppRoutes(){
       <Route path="/schemes" element={<Schemes />} />
       <Route path="/pesticide" element={<PestControl />} />
       <Route path="/jobs" element={<Jobs />} />
+      <Route path="/chat" element={<Chatbot />} />
+      <Route path="/assistant" element={<VoiceChat/>} />
+      <Route path="/cropplanner" element={<CropPlanner />} />
+      <Route path="/season" element={<SeasonCrops />} />
+
+
       
     
     </Routes>

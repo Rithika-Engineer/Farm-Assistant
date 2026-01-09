@@ -1,102 +1,120 @@
-import Header from "../components/Header";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../LanguageContext";
-import BottomNav from "../components/BottomNav";
 
-import { useState, useEffect } from "react";
+const API_KEY = "5b5ff156792b20ec190acb8be8302c57";
 
-
-
-
-
-
-export default function Weather() {
+export default function Weather(){
 
   const { lang } = useLanguage();
   const t = lang === "ta";
-  const [farmer, setFarmer] = useState({});
- 
+  const navigate = useNavigate();
 
-useEffect(()=>{
-  const saved = JSON.parse(localStorage.getItem("farmer"));
-  if(saved){
-    setFarmer(saved);
+  const [data,setData] = useState(null);
+  const [loading,setLoading] = useState(true);
+
+  // ---------- TEXT TO SPEECH ----------
+  function speak(text){
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = t ? "ta-IN" : "en-US";
+    window.speechSynthesis.speak(speech);
   }
-  
 
-},[]);
+  // ---------- GET WEATHER ----------
+  async function getWeather(lat,lon){
+    const res = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+    );
+    return await res.json();
+  }
+
+  // ---------- ON LOAD ----------
+  useEffect(()=>{
+
+    navigator.geolocation.getCurrentPosition(async(pos)=>{
+
+      const w = await getWeather(pos.coords.latitude,pos.coords.longitude);
+      setData(w);
+      setLoading(false);
+
+      const msg = t
+        ? `இன்றைய வெப்பநிலை ${Math.round(w.main.temp)} டிகிரி செல்சியஸ்`
+        : `Today's temperature is ${Math.round(w.main.temp)} degree Celsius`;
+
+      speak(msg);
+    });
+
+  },[]);
 
 
-  return (
+  if(loading) return (
     <div style={styles.page}>
- 
-      <div style={styles.mobile}>
-      <Header title={t ? "வானிலை" : "Weather"} />
-     
+      <div style={styles.box}>Loading...</div>
+    </div>
+  );
 
 
-        <BottomNav />
+  const temp = Math.round(data.main.temp);
+  const hum = data.main.humidity;
+  const wind = data.wind.speed;
+  const rain = data.weather[0].main === "Rain";
 
+  return(
+    <div style={styles.page}>
 
-        {/* APP BAR */}
-        <div style={styles.topbar}>
-          <span style={styles.appTitle}>
-          <Header title={t ? "விவசாயி உதவியாளர்" : "Farmer Assistant"} back={false} />
-            {t ? "விவசாய உதவி" : "Farmer Assistant"}
-          </span>
-        </div>
-        
+      <div style={styles.box}>
 
-        {/* HEADER */}
+        <h2 style={{textAlign:"center",color:"#0a6b2a"}}>
+          {t?"வானிலை தகவல்":"Weather Report"}
+        </h2>
+
         <div style={styles.hero}>
-          <div style={styles.heroIcon}>🌤</div>
-
-          <div style={styles.heroTemp}>29°C</div>
-
-          <div style={styles.heroText}>
-            {t ? "மிதமான மேகம்" : "Partly Cloudy"}
-          </div>
-
-          <div style={styles.heroLocation}>📍 Thanjavur</div>
+          <div style={{fontSize:42}}>🌤</div>
+          <h1>{temp}°C</h1>
+          <p>{data.weather[0].description}</p>
+          <p>📍 {data.name}</p>
         </div>
 
-        {/* DATA CARDS */}
         <div style={styles.cards}>
-
-          <Card title={t ? "மழை வாய்ப்பு" : "Rain Chance"} value="60%" icon="🌧" />
-          <Card title={t ? "காற்று வேகம்" : "Wind" } value="12 km/hr" icon="🌬" />
-          <Card title={t ? "ஈரப்பதம்" : "Humidity"} value="72%" icon="💧" />
-          <Card title={t ? "வெப்ப நிலை உணர்வு" : "Feels Like"} value="31°C" icon="🌡" />
-
+          <div style={styles.card}>💧 {t?"ஈரப்பதம்":"Humidity"}: {hum}%</div>
+          <div style={styles.card}>🌬 {t?"காற்று":"Wind"}: {wind} km/h</div>
+          <div style={styles.card}>🌧 {t?"மழை நிலை":"Rain"}: {rain ? "Yes" : "No"}</div>
         </div>
 
-       <div style={styles.card}>
-        <h3>{t?"விவசாய அறிவுரை":"Farming Advice"}</h3>
-
-        <ul>
-          <li>{t?"மழை இருக்கும் — பூச்சி மருந்து தெளிக்க வேண்டாம்":"Rain expected — avoid spraying chemicals"}</li>
-          <li>{t?"நீர்ப்பாய்ச்சி தள்ளிவை":"Delay irrigation"}</li>
-          <li>{t?"அறுவடை கவனமாக செய்யவும்":"Plan harvest carefully"}</li>
-        </ul>
-      </div>
-
-
-        {/* ADVICE BOX */}
-        <div style={styles.tip}>
-          {t
-            ? "🌱 இன்று தெளிப்பு செய்ய வேண்டாம் — மழை வாய்ப்பு உள்ளது"
-            : "🌱 Avoid spraying today — rain expected"}
+        {/* 🔔 WEATHER ADVICE */}
+        <div style={styles.advice}>
+          {rain
+            ? (t?"இன்று தெளிப்பு செய்ய வேண்டாம் — மழை வாய்ப்பு உள்ளது"
+                 :"Avoid spraying today — rain expected")
+            : (t?"சாகுபடி பணிக்கு நல்ல வானிலை"
+                 :"Good weather for field work")}
         </div>
 
-        {/* WEEK FORECAST */}
-        <div style={styles.section}>
-          {t ? "அடுத்த நாட்கள்" : "Upcoming Days"}
+        {/* 👨‍🌾 CROP ADVICE */}
+        <div style={styles.advice2}>
+          {temp>32
+            ? (t?"அதிக வெப்பம் — அதிக நீர்ப்பாய்ச்சி செய்யவும்"
+                 :"High heat — Increase irrigation")
+            : (t?"சாதாரண வெப்பம் — பயிர் வளர்ச்சிக்கு உகந்தது"
+                 :"Normal temperature — good for crops")}
         </div>
 
-        <div style={styles.week}>
-          <DayBox day="Mon" icon="⛅" temp="29°C" />
-          <DayBox day="Tue" icon="🌧" temp="26°C" />
-          <DayBox day="Wed" icon="☀" temp="31°C" />
-        </div>
+        {/* 🔊 PLAY VOICE */}
+        <button style={styles.voice}
+          onClick={()=>speak(
+            t?`இன்றைய வெப்பநிலை ${temp} டிகிரி, ஈரப்பதம் ${hum} சதவீதம்`
+             :`Today's temperature ${temp} degrees and humidity ${hum} percent`
+          )}
+        >
+          🔊 {t?"குரலில் கேட்க":"Play Voice"}
+        </button>
+
+        {/* ⬅ BACK */}
+        <button style={styles.back}
+          onClick={()=>navigate("/home")}
+        >
+          ⬅ {t?"முதற்பக்கத்திற்கு":"Back to Home"}
+        </button>
 
       </div>
     </div>
@@ -104,129 +122,88 @@ useEffect(()=>{
 }
 
 
-function Card({ title, value, icon }) {
-  return (
-    <div style={styles.cardBox}>
-      <div style={styles.cardIcon}>{icon}</div>
-      <div style={styles.cardTitle}>{title}</div>
-      <div style={styles.cardValue}>{value}</div>
-    </div>
-  );
-}
 
-function DayBox({ day, icon, temp }) {
-  return (
-    <div style={styles.dayBox}>
-      <div>{day}</div>
-      <div style={{ fontSize: 26 }}>{icon}</div>
-      <div>{temp}
-      </div>
-      
+const styles={
 
-    </div>
-  );
-}
-
-
-const styles = {
-
- page:{
-  minHeight:"100vh",
-  display:"flex",
-  justifyContent:"center",
-  alignItems:"flex-start",
-  paddingTop:"10px",
-  background:"white"
-},
-
-
-  mobile:{
-  width:"90%",
-  maxWidth:420,
-  background:"#259125ff",
-  borderRadius:22,
-  boxShadow:"0 18px 45px rgba(0,0,0,.18)",
-  padding:"12px",
-  margin:"0 auto"
-},
-   container:{
-    maxWidth:"420px",   // 📱 mobile width
-    margin:"0 auto",    // ⭐ center screen
-    padding:"12px",
+  page:{
     minHeight:"100vh",
-    background:"#eaf3ff"
-  },
-  topbar:{
-    textAlign:"center",
-    fontWeight:"bold",
-    fontSize:16,
-    padding:8,
-    borderRadius:12,
-    background:"#f4fff3",
-    marginBottom:10
+    display:"flex",
+    justifyContent:"center",
+    alignItems:"center",
+    background:"linear-gradient(#b5f7b5,#7dda7d)"
   },
 
-  appTitle:{
-    color:"#2f7d32"
+  box:{
+    width:"92%",
+    maxWidth:420,
+    padding:16,
+    borderRadius:20,
+    backgroundImage:
+
+  
+  "url('https://images.unsplash.com/photo-1554321041-d735df87ccaa')",
+
+
+    backgroundSize:"cover",
+    backgroundPosition:"center",
+    boxShadow:"0 18px 45px rgba(0,0,0,.25)",
+    color:"white"
   },
 
   hero:{
-    background:"linear-gradient(#6fdc6f,#3fbf3f)",
-    color:"white",
-    borderRadius:20,
     textAlign:"center",
-    padding:22,
-    marginBottom:12
+    padding:10,
+    borderRadius:14,
+    background:"rgba(0,0,0,0.35)"
   },
-
-  heroIcon:{ fontSize:44 },
-  heroTemp:{ fontSize:36, fontWeight:"bold" },
-  heroText:{ marginTop:5 },
-  heroLocation:{ opacity:.9, marginTop:4 },
 
   cards:{
-    display:"grid",
-    gridTemplateColumns:"1fr 1fr",
-    gap:10,
-    marginBottom:12
+    marginTop:10
   },
 
-  cardBox:{
-    background:"#f3faf3",
-    borderRadius:16,
-    padding:14,
-    textAlign:"center",
-    border:"1px solid #dbe6dbff"
+  card:{
+    background:"rgba(0,0,0,0.4)",
+    padding:8,
+    borderRadius:10,
+    marginBottom:6
   },
 
-  cardIcon:{ fontSize:22 },
-  cardTitle:{ fontSize:12, color:"#555" },
-  cardValue:{ fontWeight:"bold", fontSize:16 },
-
-  tip:{
-    background:"#fff4a3",
-    padding:12,
-    borderRadius:14,
-    marginBottom:10
-  },
-
-  section:{
-    marginBottom:6,
+  advice:{
+    background:"#ffef9e",
+    color:"black",
+    padding:10,
+    borderRadius:12,
+    marginTop:10,
     fontWeight:"bold"
   },
 
-  week:{
-    display:"flex",
-    gap:10
-  },
-
-  dayBox:{
-    flex:1,
-    background:"#e1e4d2ff",
-    borderRadius:14,
-    textAlign:"center",
+  advice2:{
+    background:"#12c30fff",
+    color:"black",
     padding:10,
-    border:"1px solid #d8efd8"
+    borderRadius:12,
+    marginTop:8
   },
 
+  voice:{
+    width:"100%",
+    padding:10,
+    marginTop:10,
+    borderRadius:10,
+    border:"none",
+    background:"#21e261ff",
+    color:"white",
+    fontWeight:"bold"
+  },
+
+  back:{
+    width:"100%",
+    padding:10,
+    marginTop:8,
+    borderRadius:10,
+    border:"none",
+    background:"#10ce43ff",
+    color:"white",
+    fontWeight:"bold"
+  }
 };

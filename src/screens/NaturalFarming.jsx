@@ -1,304 +1,211 @@
+
 import { useState } from "react";
 import { useLanguage } from "../LanguageContext";
+import { useNavigate } from "react-router-dom";
 import BottomNav from "../components/BottomNav";
 
 export default function NaturalFarming(){
 
   const { lang } = useLanguage();
   const t = lang === "ta";
+  const navigate = useNavigate();
 
   const [crop, setCrop] = useState("");
 
-
+  /* ================= DATA ================= */
   const data = {
 
     paddy:{
-      fert: t ? "ஜீவாமிருதம் 5 லிட்டர் / ஏக்கர்" : "Jeevamrutham 5L / acre",
-
-      prep: t 
-        ? [
-          "1 லிட்டர் மாட்டு சாண நீர்",
-          "1 லிட்டர் மாட்டு சிறுநீர்",
-          "1 கிலோ கருப்பட்டி",
-          "ஒரு கைபிடி மண்",
-          "20 லிட்டர் தண்ணீரில் கலக்கவும்",
-          "24 மணி நேரம் ஊறவிடவும்"
-        ]
-        : [
-          "1L cow dung slurry",
-          "1L cow urine",
-          "1kg jaggery",
-          "A handful of soil",
-          "Mix in 20L water",
-          "Ferment 24 hours"
-        ],
-
-      apply: t 
-        ? "15 நாட்களுக்கு ஒருமுறை வேர்ப்பகுதியில் ஊற்றவும்"
-        : "Apply near roots every 15 days",
-
-      safety: t
-        ? "கையுறை அணியவும்"
-        : "Wear gloves",
-
-      benefit: t
-        ? [
-          "மண் உயிர்சத்து அதிகரிக்கும்",
-          "நீர் பிடிப்புத் திறன் உயரும்",
-          "செலவு குறையும்",
-          "நிலம் நீண்டகாலம் பயிரிட ஏற்றது"
-        ]
-        : [
-          "Improves soil microbes",
-          "Increases water holding capacity",
-          "Reduces cost",
-          "Improves long-term soil health"
-        ]
+      fert: t?"ஜீவாமிருதம் 5 லிட்டர் / ஏக்கர்":"Jeevamrutham 5L / acre",
+      prep: t
+        ? ["மாட்டு சாணம் + சிறுநீர்","கருப்பட்டி சேர்க்கவும்","24 மணி நேரம் ஊறவிடவும்"]
+        : ["Cow dung + urine","Add jaggery","Ferment 24 hrs"],
+      apply: t?"15 நாட்களுக்கு ஒருமுறை":"Every 15 days",
+      safety: t?"கையுறை அணியவும்":"Wear gloves",
+      benefit: t?"மண் வளம் உயரும்":"Improves soil fertility"
     },
-
 
     banana:{
-      fert: t ? "பஞ்சகவ்யம் 3 லிட்டர் / ஏக்கர்"
-              : "Panchagavya 3L / acre",
-
-      prep: t 
-        ? [
-          "2 லிட்டர் தயிர்",
-          "2 லிட்டர் பால்",
-          "1 லிட்டர் நெய்",
-          "3 லிட்டர் மாட்டு சிறுநீர்",
-          "5 லிட்டர் மாட்டு சாண நீர்",
-          "7 நாட்கள் ஊறவிடவும்"
-        ]
-        : [
-          "2L curd",
-          "2L milk",
-          "1L ghee",
-          "3L cow urine",
-          "5L cow dung slurry",
-          "Ferment 7 days"
-        ],
-
-      apply: t 
-        ? "20 நாட்களுக்கு ஒருமுறை பயன்படுத்தவும்"
-        : "Apply every 20 days",
-
-      safety: t
-        ? "நிழலில் சேமிக்கவும்"
-        : "Store in shade",
-
-      benefit: t
-        ? [
-          "வளர்ச்சி வேகம் அதிகரிக்கும்",
-          "கொத்து வலிமை உயரும்",
-          "பழத்தின் தரம் உயரும்",
-          "உற்பத்தி நிலையானது"
-        ]
-        : [
-          "Boosts growth",
-          "Stronger bunches",
-          "Better fruit quality",
-          "Stable yield"
-        ]
+      fert: t?"பஞ்சகவ்யம் 3 லிட்டர்":"Panchagavya 3L",
+      prep: t
+        ? ["பால், தயிர் சேர்க்கவும்","7 நாட்கள் ஊறவிடவும்"]
+        : ["Add milk & curd","Ferment 7 days"],
+      apply: t?"20 நாட்களுக்கு ஒருமுறை":"Every 20 days",
+      safety: t?"நிழலில் வைக்கவும்":"Store in shade",
+      benefit: t?"பழ தரம் உயரும்":"Better fruit quality"
     },
 
-
     groundnut:{
-      fert: t ? "வெர்மிகம்போஸ்ட் 1 டன் / ஏக்கர்"
-              : "Vermicompost 1 ton / acre",
+      fert: t?"வெர்மிகம்போஸ்ட்":"Vermicompost",
+      prep: t?["கழிவுகளை குழியில் வைக்கவும்"]:["Put waste in pit"],
+      apply: t?"விதைப்பு முன்":"Before sowing",
+      safety: t?"பூச்சியிலிருந்து பாதுகாப்பு":"Protect from pests",
+      benefit: t?"வேர் வளர்ச்சி":"Better root growth"
+    },
 
-      prep: t
-        ? [
-          "பசுமை கழிவு சேகரிக்கவும்",
-          "வண்டு உரம் குழியில் வைக்கவும்",
-          "ஈரப்பதம் பராமரிக்கவும்"
-        ]
-        : [
-          "Collect organic waste",
-          "Place in vermi pit",
-          "Keep moist"
-        ],
+    maize:{
+      fert: t?"பஞ்சகவ்யம்":"Panchagavya",
+      prep: t?["7 நாள் ஊறவிடவும்"]:["Ferment 7 days"],
+      apply: t?"10–15 நாட்கள்":"10–15 days",
+      safety: t?"குழந்தைகள் அருகில் வைக்காதீர்கள்":"Keep away from children",
+      benefit: t?"வளர்ச்சி அதிகம்":"Faster growth"
+    },
 
-      apply: t
-        ? "விதைப்பு முன் மண்ணில் கலக்கவும்"
-        : "Mix before sowing",
+    cotton:{
+      fert: t?"ஜீவாமிருதம்":"Jeevamrutham",
+      prep: t?["24 மணி நேரம் ஊறவிடவும்"]:["Ferment 24 hrs"],
+      apply: t?"15 நாட்கள்":"15 days",
+      safety: t?"மூடி வைத்திருங்கள்":"Keep covered",
+      benefit: t?"செலவு குறைவு":"Low cost"
+    },
 
-      safety: t
-        ? "பூச்சியிலிருந்து பாதுகாக்க மூடி வைக்கவும்"
-        : "Cover pit from pests",
+    sugarcane:{
+      fert: t?"பஞ்சகவ்யம்":"Panchagavya",
+      prep: t?["7 நாள் ஊறவிடவும்"]:["Ferment 7 days"],
+      apply: t?"20 நாட்கள்":"20 days",
+      safety: t?"நேரடி வெயிலில் வைக்காதீர்கள்":"Avoid sunlight",
+      benefit: t?"இனிப்பு அளவு அதிகம்":"Better sweetness"
+    },
 
-      benefit: t
-        ? [
-          "மண் வளம் உயரும்",
-          "வேர் வளர்ச்சி நன்றாகும்",
-          "நீர்ப்பிடிப்புத் திறன் உயரும்",
-          "நீண்டகால மண் ஆரோக்கியம்"
-        ]
-        : [
-          "Increases soil fertility",
-          "Improves root development",
-          "Better water retention",
-          "Long-term soil health"
-        ]
+    tomato:{
+      fert: t?"ஜீவாமிருதம்":"Jeevamrutham",
+      prep: t?["24 மணி நேரம்"]:["24 hrs"],
+      apply: t?"10 நாட்கள்":"10 days",
+      safety: t?"கையுறை":"Use gloves",
+      benefit: t?"மகசூல் அதிகம்":"High yield"
+    },
+
+    onion:{
+      fert: t?"வெர்மிகம்போஸ்ட்":"Vermicompost",
+      prep: t?["மண்ணில் கலக்கவும்"]:["Mix with soil"],
+      apply: t?"விதைப்பு முன்":"Before sowing",
+      safety: t?"ஈரப்பதம் பராமரிக்கவும்":"Maintain moisture",
+      benefit: t?"கிழங்கு வலிமை":"Strong bulbs"
+    },
+
+    chilli:{
+      fert: t?"பஞ்சகவ்யம்":"Panchagavya",
+      prep: t?["7 நாள்"]:["7 days"],
+      apply: t?"15 நாட்கள்":"15 days",
+      safety: t?"மூக்கு பாதுகாப்பு":"Use mask",
+      benefit: t?"காய் தரம்":"Good quality"
+    },
+
+    pulses:{
+      fert: t?"ஜீவாமிருதம்":"Jeevamrutham",
+      prep: t?["24 மணி"]:["24 hrs"],
+      apply: t?"20 நாட்கள்":"20 days",
+      safety: t?"கையுறை":"Gloves",
+      benefit: t?"நைட்ரஜன் அதிகரிப்பு":"Improves nitrogen"
     }
 
   };
 
-
+  /* ================= UI ================= */
   return(
     <div style={styles.page}>
-
       <div style={styles.mobile}>
 
         <BottomNav />
 
-        <h2>
-          {t ? "இயற்கை வேளாண்மை ஆலோசனை"
-             : "Natural Farming Advisor"}
+        <h2 style={{textAlign:"center"}}>
+          {t?"இயற்கை வேளாண்மை ஆலோசனை":"Natural Farming Advisor"}
         </h2>
-
 
         <select
           style={styles.input}
           value={crop}
           onChange={e=>setCrop(e.target.value)}
         >
-          <option value="">
-            {t ? "பயிரை தேர்வு செய்க" : "Select Crop"}
-          </option>
-
-          <option value="paddy">{t?"நெல்":"Paddy"}</option>
-          <option value="banana">{t?"வாழை":"Banana"}</option>
-          <option value="groundnut">{t?"வேர்க்கடலை":"Groundnut"}</option>
+          <option value="">{t?"பயிரை தேர்வு செய்க":"Select Crop"}</option>
+          {Object.keys(data).map(c=>(
+            <option key={c} value={c}>{c.toUpperCase()}</option>
+          ))}
         </select>
 
-
         {crop && (
-          <div>
-
-            {/* Organic fertilizer */}
+          <>
             <div style={styles.card}>
               <h3>🌿 {t?"இயற்கை உரம்":"Organic Fertilizer"}</h3>
               <p>{data[crop].fert}</p>
             </div>
 
-            {/* Preparation */}
             <div style={styles.card}>
-              <h3>🧪 {t?"எப்படி தயாரிப்பது?":"How to Prepare"}</h3>
-              <ol>
-                {data[crop].prep.map((s,i)=>(
-                  <li key={i}>{s}</li>
-                ))}
-              </ol>
+              <h3>🧪 {t?"தயாரிப்பு":"Preparation"}</h3>
+              <ul>{data[crop].prep.map((p,i)=><li key={i}>{p}</li>)}</ul>
             </div>
 
-            {/* Apply */}
             <div style={styles.card}>
-              <h3>📏 {t?"எப்படி பயன்படுத்துவது?":"How to Apply"}</h3>
+              <h3>📏 {t?"பயன்பாடு":"Usage"}</h3>
               <p>{data[crop].apply}</p>
             </div>
 
-            {/* Benefits */}
             <div style={styles.card}>
-              <h3>🌱 {t?"பயன் என்ன?":"Benefits After Use"}</h3>
-              <ul>
-                {data[crop].benefit.map((b,i)=>(
-                  <li key={i}>{b}</li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Safety */}
-            <div style={styles.card}>
-              <h3>⚠ {t?"பாதுகாப்பு அறிவுரை":"Safety Advice"}</h3>
+              <h3>⚠ {t?"பாதுகாப்பு":"Safety"}</h3>
               <p>{data[crop].safety}</p>
             </div>
 
-            {/* COMPARISON */}
             <div style={styles.card}>
-              <h3>⚖ {t?"ஒப்பீடு":"Natural vs Chemical"}</h3>
-
-              <table style={{width:"100%", textAlign:"left"}}>
-                <thead>
-                  <tr>
-                    <th>{t?"இயற்கை உரம்":"Natural Fertilizer"}</th>
-                    <th>{t?"ரசாயன உரம்":"Chemical Fertilizer"}</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td>{t?"மண் வளம் உயரும்":"Improves soil health"}</td>
-                    <td>{t?"மண் குணம் குறையும்":"Damages soil quality"}</td>
-                  </tr>
-
-                  <tr>
-                    <td>{t?"செலவு குறைவு":"Low cost"}</td>
-                    <td>{t?"செலவு அதிகம்":"High cost"}</td>
-                  </tr>
-
-                  <tr>
-                    <td>{t?"நீண்டகால நன்மை":"Long-term benefit"}</td>
-                    <td>{t?"குறுகியகால நன்மை":"Short-term only"}</td>
-                  </tr>
-
-                  <tr>
-                    <td>{t?"ஆரோக்கியமான பயிர்":"Healthy crops"}</td>
-                    <td>{t?"ரசாயன மீதிப்பாகம்":"Chemical residue risk"}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <h3>🌱 {t?"பயன்":"Benefit"}</h3>
+              <p>{data[crop].benefit}</p>
             </div>
 
-          </div>
+            <div style={styles.card}>
+              <h3>⚖ {t?"இயற்கை vs ரசாயன":"Natural vs Chemical"}</h3>
+              <p>✅ {t?"மண் ஆரோக்கியம் உயரும்":"Improves soil health"}</p>
+              <p>❌ {t?"ரசாயன மீதிப்பாகம் இல்லை":"No chemical residue"}</p>
+            </div>
+          </>
         )}
 
-        {!crop && (
-          <p style={{opacity:.6}}>
-            {t?"பயிரை தேர்வு செய்க":"Please select crop"}
-          </p>
-        )}
+        <button style={styles.back} onClick={()=>navigate("/home")}>
+          ⬅ {t?"முகப்பு":"Home"}
+        </button>
 
       </div>
     </div>
   );
 }
 
-
-
+/* ================= STYLES ================= */
 const styles={
-
   page:{
-    minheight:"100vh",
+    minHeight:"100vh",
     display:"flex",
     justifyContent:"center",
     alignItems:"center",
-    background:"#e5f6e5"
+    backgroundImage:
+      "linear-gradient(rgba(0,100,0,0.4), rgba(0,100,0,0.4)), url('https://images.pexels.com/photos/247599/pexels-photo-247599.jpeg')",
+    backgroundSize:"cover",
+    backgroundPosition:"center"
   },
-
   mobile:{
     width:"100%",
     maxWidth:420,
-    background:"#259125ff",
-    borderRadius:22,
-    boxShadow:"0 18px 45px rgba(0,0,0,.18)",
+    
+    borderRadius:20,
     padding:18,
-    margin:"0 10px"
+    boxShadow:"0 15px 40px rgba(0,0,0,.2)"
   },
-
   input:{
     width:"100%",
     padding:10,
-    borderRadius:12,
-    border:"1px solid #ccc",
+    borderRadius:10,
     marginBottom:10
   },
-
   card:{
-    background:"#f7fff7",
-    borderRadius:16,
-    padding:14,
-    marginBottom:10,
-    border:"1px solid #d8efd8"
+    background:"#5df65dff",
+    padding:12,
+    borderRadius:14,
+    marginBottom:10
+  },
+  back:{
+    width:"100%",
+    padding:10,
+    border:"none",
+    borderRadius:12,
+    background:"#2e7d32",
+    color:"white",
+    fontWeight:"bold"
   }
 };

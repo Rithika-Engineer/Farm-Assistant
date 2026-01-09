@@ -1,27 +1,26 @@
 import BottomNav from "../components/BottomNav";
 import { useLanguage } from "../LanguageContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Videos() {
 
   const { lang } = useLanguage();
   const t = lang === "ta";
+  const navigate = useNavigate();
 
   const list = [
     {
       title: t ? "இயற்கை விவசாயம் அறிமுகம்" : "Intro to Natural Farming",
       link: "https://www.youtube.com/embed/G0B-m7vV4fA"
-
     },
     {
       title: t ? "உரம் தயாரிப்பு" : "Organic Fertilizer Guide",
       link: "https://www.youtube.com/embed/q6ioP1L1QZI"
-
     },
     {
-  title: t ? "நீர் சேமிப்பு முறைகள்" : "Water Saving Methods",
-  link: "https://www.youtube.com/embed/VI5jz7wKZ2o"
-}
-
+      title: t ? "நீர் சேமிப்பு முறைகள்" : "Water Saving Methods",
+      link: "https://www.youtube.com/embed/VI5jz7wKZ2o"
+    }
   ];
 
   return (
@@ -51,6 +50,14 @@ export default function Videos() {
           ))}
         </div>
 
+        {/* ✅ BACK BUTTON (ADDED ONLY THIS) */}
+        <button
+          style={styles.back}
+          onClick={() => navigate("/home")}
+        >
+          ⬅ {t ? "முகப்பு" : "Back to Home"}
+        </button>
+
       </div>
     </div>
   );
@@ -67,15 +74,15 @@ const styles = {
     background:"#e5f6e5"
   },
 
-mobile:{
-  width:"100%",
-  maxWidth:420,
-  background:"#259125ff",
-  borderRadius:22,
-  boxShadow:"0 18px 45px rgba(0,0,0,.18)",
-  padding:18,
-  margin:"0 10px"
-},
+  mobile:{
+    width:"100%",
+    maxWidth:420,
+    background:"#259125ff",
+    borderRadius:22,
+    boxShadow:"0 18px 45px rgba(0,0,0,.18)",
+    padding:18,
+    margin:"0 10px"
+  },
 
   header:{
     background:"linear-gradient(#6fdc6f,#3fbf3f)",
@@ -110,5 +117,18 @@ mobile:{
     height:"180px",
     border:"none",
     borderRadius:10
+  },
+
+  /* ✅ BACK BUTTON STYLE (ADDED ONLY THIS) */
+  back:{
+    width:"100%",
+    marginTop:12,
+    padding:12,
+    borderRadius:14,
+    background:"#145a32",
+    color:"white",
+    border:"none",
+    fontWeight:"bold",
+    cursor:"pointer"
   }
 };

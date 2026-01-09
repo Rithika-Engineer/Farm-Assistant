@@ -59,7 +59,7 @@ const styles = {
 
   mobile:{
     width:420,
-    background:"white",
+    background:"#4be352ff",
     borderRadius:22,
     boxShadow:"0 18px 45px rgba(0,0,0,.18)",
     padding:20,
@@ -69,7 +69,7 @@ const styles = {
   logoCircle:{
     width:90,
     height:90,
-    background:"#e8ffe9",
+    background:"#2acb32ff",
     borderRadius:"50%",
     display:"flex",
     justifyContent:"center",

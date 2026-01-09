@@ -1,97 +1,210 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "../LanguageContext";
 import BottomNav from "../components/BottomNav";
+import { useNavigate } from "react-router-dom";
 
 export default function Profit(){
 
   const { lang } = useLanguage();
   const t = lang === "ta";
+  const navigate = useNavigate();
 
-  const [cost, setCost] = useState({
-    seed: 0,
-    fert: 0,
-    labour: 0,
-    water: 0,
-    transport: 0,
-  });
-
-  const [sell, setSell] = useState(0);
+  const [crop, setCrop] = useState("Paddy");
+  const [cost, setCost] = useState(0);
   const [yieldKg, setYieldKg] = useState(0);
+  const [price, setPrice] = useState(0);
 
-  const totalCost =
-    Number(cost.seed) +
-    Number(cost.fert) +
-    Number(cost.labour) +
-    Number(cost.water) +
-    Number(cost.transport);
+  /* ---------- CURRENT SEASON ---------- */
+  const m = new Date().getMonth()+1;
+  const season =
+    m>=6 && m<=10 ? "Kharif" :
+    m>=11 || m<=2 ? "Rabi" : "Summer";
 
-  const totalIncome = Number(sell) * Number(yieldKg);
+  /* ---------- CALCULATIONS ---------- */
+  const income = price * yieldKg;
+  const profit = income - cost;
 
-  const profit = totalIncome - totalCost;
+  /* ---------- SAVE SEASON HISTORY ✅ ADDED ---------- */
+  const [seasonHistory, setSeasonHistory] = useState({});
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("seasonProfit")) || {};
+    setSeasonHistory(saved);
+  }, []);
+
+  useEffect(() => {
+    if(cost > 0 || income > 0){
+      const updated = {
+        ...seasonHistory,
+        [season]: profit
+      };
+      setSeasonHistory(updated);
+      localStorage.setItem("seasonProfit", JSON.stringify(updated));
+    }
+  }, [profit]); // only addition
+
+  /* ---------- BENCHMARK DATA ---------- */
+  const benchmark = {
+    Paddy:18000,
+    Maize:15000,
+    Cotton:25000,
+    Groundnut:22000,
+  };
+
+  /* ---------- MARKET PRICE (DEMO) ---------- */
+  const marketPrice = {
+    Paddy:{min:18,max:24},
+    Maize:{min:16,max:22},
+    Cotton:{min:55,max:70},
+    Groundnut:{min:45,max:60},
+  };
+
+  /* ---------- TAMIL VOICE ---------- */
+  function speak(){
+    const msg = profit>=0
+      ? `நீங்கள் லாபம் பெற்றுள்ளீர்கள். லாபம் ரூபாய் ${profit}`
+      : `இந்த பருவத்தில் இழப்பு ஏற்பட்டுள்ளது`;
+
+    const speech = new SpeechSynthesisUtterance(msg);
+    speech.lang="ta-IN";
+    window.speechSynthesis.speak(speech);
+  }
 
   return(
     <div style={styles.page}>
-      <div style={styles.mobile}>
+      <div style={styles.overlay}>
+        <div style={styles.mobile}>
 
-        <BottomNav />
+          <BottomNav />
 
-        <h2>{t ? "லாபம் & செலவு கணக்குபடுத்தி" : "Profit & Cost Calculator"}</h2>
+          <h2>💰 {t?"லாப கணக்கீடு":"Profit Analysis"}</h2>
 
-        <h3>{t ? "செலவு விவரம்" : "Cost Details"}</h3>
+          {/* SELECT CROP */}
+          <select style={styles.input} value={crop} onChange={e=>setCrop(e.target.value)}>
+            <option>Paddy</option>
+            <option>Maize</option>
+            <option>Cotton</option>
+            <option>Groundnut</option>
+          </select>
 
-        <input style={styles.input} placeholder={t?"விதை செலவு":"Seed Cost"}
-          onChange={e=>setCost({...cost, seed:e.target.value})} />
+          <p>📅 {t?"தற்போதைய பருவம்":"Current Season"}: <b>{season}</b></p>
 
-        <input style={styles.input} placeholder={t?"உரம் செலவு":"Fertilizer Cost"}
-          onChange={e=>setCost({...cost, fert:e.target.value})} />
+          {/* INPUTS */}
+          <input style={styles.input} placeholder={t?"மொத்த செலவு":"Total Cost"}
+            onChange={e=>setCost(e.target.value)} />
 
-        <input style={styles.input} placeholder={t?"வேலைக்காரர் செலவு":"Labour Cost"}
-          onChange={e=>setCost({...cost, labour:e.target.value})} />
+          <input style={styles.input} placeholder={t?"உற்பத்தி (Kg)":"Yield (Kg)"}
+            onChange={e=>setYieldKg(e.target.value)} />
 
-        <input style={styles.input} placeholder={t?"நீர் / மின் செலவு":"Water / Electricity"}
-          onChange={e=>setCost({...cost, water:e.target.value})} />
+          <input style={styles.input} placeholder={t?"விலை / Kg":"Price per Kg"}
+            onChange={e=>setPrice(e.target.value)} />
 
-        <input style={styles.input} placeholder={t?"போக்குவரத்து செலவு":"Transport Cost"}
-          onChange={e=>setCost({...cost, transport:e.target.value})} />
+          {/* RESULT */}
+          <div style={styles.card}>
+            <p>💸 {t?"செலவு":"Cost"}: ₹{cost}</p>
+            <p>📈 {t?"வருமானம்":"Income"}: ₹{income}</p>
+            <h2 style={{color:profit>=0?"green":"red"}}>₹{profit}</h2>
+            <button style={styles.voice} onClick={speak}>🔊 Tamil Voice</button>
+          </div>
 
+          {/* SEASON-WISE HISTORY ✅ ADDED */}
+          <div style={styles.card}>
+            <h3>📊 {t?"பருவ வாரியான அறிக்கை":"Season-wise Report"}</h3>
 
-        <h3>{t ? "வருமான விவரம்" : "Income Details"}</h3>
+            {Object.keys(seasonHistory).length === 0 && (
+              <p>{t?"முந்தைய தகவல் இல்லை":"No previous data"}</p>
+            )}
 
-        <input style={styles.input} placeholder={t?"விலை / கிலோ":"Selling Price / Kg"}
-          onChange={e=>setSell(e.target.value)} />
+            {Object.entries(seasonHistory).map(([s,val])=>(
+              <p key={s} style={{color:val>=0?"green":"red"}}>
+                🌾 {s} :
+                ₹{val} {val>=0 ? (t?"(லாபம்)":"(Profit)") : (t?"(இழப்பு)":"(Loss)")}
+              </p>
+            ))}
 
-        <input style={styles.input} placeholder={t?"மொத்த உற்பத்தி (கிலோ)":"Total Yield (Kg)"}
-          onChange={e=>setYieldKg(e.target.value)} />
+            <p style={{fontSize:12,opacity:.7}}>
+              {t
+                ? "அடுத்த பருவத்தில் சென்றாலும் முந்தைய பருவ அறிக்கை காணப்படும்"
+                : "Previous season report will remain visible"}
+            </p>
+          </div>
 
+          {/* MARKET PRICE */}
+          <div style={styles.card}>
+            <h3>🏪 {t?"இன்றைய சந்தை விலை":"Today Market Price"}</h3>
+            <p>Min ₹{marketPrice[crop].min} | Max ₹{marketPrice[crop].max}</p>
 
-        <div style={styles.card}>
-          <p>💸 {t?"மொத்த செலவு":"Total Cost"}: ₹{totalCost}</p>
-          <p>📈 {t?"மொத்த வருமானம்":"Total Income"}: ₹{totalIncome}</p>
-          <p>🧮 {t?"இறுதி லாபம்":"Final Profit"}:</p>
+            
+            {profit<0 && (
+              <p style={{color:"red"}}>
+                🛡 {t?"இழப்பு இருப்பதால் காப்பீடு பெற வாய்ப்பு உள்ளது"
+                    :"Loss detected – Insurance eligible"}
+              </p>
+            )}
+          </div>
 
-          <h2 style={{color: profit>=0?"green":"red"}}>
-            ₹{profit}
-          </h2>
+          {/* BACK */}
+          <button style={styles.back} onClick={()=>navigate("/home")}>
+            ⬅ {t?"முகப்பு":"Back to Home"}
+          </button>
+
         </div>
-
       </div>
     </div>
   );
 }
 
-
+/* ---------- STYLES (BACKGROUND IMAGE ONLY ADDED) ---------- */
 const styles={
-
-  page:{minheight:"100vh",
+  page:{
+    minHeight:"100vh",
+    backgroundImage:
+      "url('https://images.unsplash.com/photo-1598515214211-89d3c73ae83b')",
+    backgroundSize:"cover",
+    backgroundPosition:"center"
+  },
+  overlay:{
+    minHeight:"100vh",
+    background:"rgba(0,100,0,0.75)",
     display:"flex",
     justifyContent:"center",
-    alignItems:"center",
-    background:"rgba(226, 229, 232, 1)"},
-
-
-  mobile:{width:"90%",maxWidth:420,background:"#259125ff",borderRadius:22,boxShadow:"0 18px 45px rgba(0,0,0,.18)",padding:15,margin:"0 10px"},
-
-  input:{width:"90%",padding:10,marginBottom:8,borderRadius:10,border:"1px solid #ccc"},
-
-  card:{background:"#f7fff7",borderRadius:16,padding:14,border:"1px solid #d8efd8"}
+    alignItems:"center"
+  },
+  mobile:{
+    width:"100%",
+    maxWidth:420,
+    background:"#1f8f3f",
+    borderRadius:22,
+    padding:16,
+    boxShadow:"0 18px 40px rgba(0,0,0,.2)"
+  },
+  input:{
+    width:"90%",
+    padding:10,
+    borderRadius:10,
+    marginBottom:8
+  },
+  card:{
+    background:"#f7fff7",
+    borderRadius:16,
+    padding:14,
+    marginBottom:10
+  },
+  voice:{
+    width:"100%",
+    padding:8,
+    borderRadius:10,
+    background:"#2e8b3d",
+    color:"white",
+    border:"none"
+  },
+  back:{
+    width:"100%",
+    padding:10,
+    borderRadius:12,
+    background:"#145a32",
+    color:"white",
+    border:"none",
+    marginTop:10
+  }
 };

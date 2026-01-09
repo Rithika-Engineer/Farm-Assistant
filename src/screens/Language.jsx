@@ -6,25 +6,21 @@ export default function Language(){
   const { lang, changeLang } = useLanguage();
   const navigate = useNavigate();
 
-  function tamil(){
-    changeLang("ta");
-  }
+  function tamil(){ changeLang("ta"); }
+  function english(){ changeLang("en"); }
 
-  function english(){
-    changeLang("en");
-  }
-
- function goNext(){
-  navigate("/profile");
-}
-
+  function goNext(){ navigate("/profile"); }
 
   return(
     <div style={styles.page}>
 
+      {/* Green overlay */}
+      <div style={styles.overlay}></div>
+
+      {/* Main Box */}
       <div style={styles.box}>
 
-        <h2>
+        <h2 style={{marginBottom:12}}>
           {lang==="ta" ? "மொழியை தேர்வு செய்க" : "Select Language"}
         </h2>
 
@@ -36,7 +32,7 @@ export default function Language(){
           English
         </button>
 
-        <p>
+        <p style={{fontWeight:"bold"}}>
           {lang==="ta" ? "தேர்ந்தெடுத்த மொழி: தமிழ்" : "Selected: English"}
         </p>
 
@@ -51,42 +47,68 @@ export default function Language(){
 }
 
 
+
 const styles={
 
+  /* FULL SCREEN PAGE */
   page:{
     height:"100vh",
+    width:"100%",
     display:"flex",
     justifyContent:"center",
     alignItems:"center",
-    background:"#e5f6e5"
+
+    /* Farming background image */
+    backgroundImage:`url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6")`,
+    backgroundSize:"cover",
+    backgroundPosition:"center",
+    position:"relative"
   },
 
+  /* Green transparent overlay */
+  overlay:{
+    position:"absolute",
+    top:0,
+    left:0,
+    right:0,
+    bottom:0,
+    background:"rgba(0,100,30,0.45)"
+  },
+
+  /* WHITE CARD */
   box:{
-    background:"white",
-    padding:20,
-    borderRadius:16,
-    boxShadow:"0 10px 25px rgba(0,0,0,.15)",
+    position:"relative",
+    background:"#57f581ff",
+    padding:22,
+    borderRadius:18,
+    boxShadow:"0 12px 30px rgba(0,0,0,.35)",
     textAlign:"center",
-    width:300
+    width:320
   },
 
+  /* Language buttons */
   btn:{
     width:"100%",
-    padding:10,
+    padding:12,
     marginBottom:10,
-    borderRadius:10,
+    borderRadius:12,
     border:"1px solid #ccc",
-    fontSize:16
+    fontSize:16,
+    fontWeight:"bold",
+    background:"#20bb4aff"
   },
 
+  /* Continue button */
   next:{
     width:"100%",
-    padding:10,
-    background:"#3fbf3f",
+    padding:12,
+    background:"#20bb4aff",
     color:"white",
     border:"none",
-    borderRadius:10,
+    borderRadius:12,
     fontWeight:"bold",
-    marginTop:10
+    marginTop:10,
+    fontSize:16,
+    boxShadow:"0 3px 10px rgba(0,0,0,.25)"
   }
 };

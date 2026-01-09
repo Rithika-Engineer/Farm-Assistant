@@ -1,318 +1,228 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "../LanguageContext";
 import BottomNav from "../components/BottomNav";
+import { useNavigate } from "react-router-dom";
 
 export default function PestControl() {
 
   const { lang } = useLanguage();
   const t = lang === "ta";
+  const navigate = useNavigate();
 
   const [pest, setPest] = useState("");
   const [image, setImage] = useState(null);
   const [autoDetect, setAutoDetect] = useState("");
+  const [season, setSeason] = useState("");
 
+  /* 🔊 Tamil Voice */
+  function speak(text){
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "ta-IN";
+    u.rate = 0.9;
+    window.speechSynthesis.speak(u);
+  }
 
-  // ---------------- DATA ----------------
+  /* --------- AUTO DETECT SEASON --------- */
+  useEffect(()=>{
+    const m = new Date().getMonth() + 1;
+    if(m >= 6 && m <= 10) setSeason("kharif");
+    else if(m >= 11 || m <= 2) setSeason("rabi");
+    else setSeason("summer");
+  },[]);
+
+  /* -------- SEASON PEST CALENDAR -------- */
+  const seasonCalendar = {
+    kharif: t
+      ? ["தண்டு துளைப்பான்", "இலை பூச்சிகள்", "பூஞ்சை நோய்"]
+      : ["Stem Borer", "Leaf Insects", "Fungal Disease"],
+
+    rabi: t
+      ? ["அஃபிட்ஸ்", "திரிப்ஸ்"]
+      : ["Aphids", "Thrips"],
+
+    summer: t
+      ? ["வேர் பூச்சிகள்", "திரிப்ஸ்"]
+      : ["Root Worms", "Thrips"]
+  };
+
+  /* ---------------- PEST DATA ---------------- */
   const data = {
 
     insects:{
-      name: t ? "இலை தின்று சேதப்படுத்தும் பூச்சிகள்" : "Leaf Eating Insects",
-
-      solution: t ? "வேம்பெண்ணெய் தெளிப்பு" : "Neem Oil Spray",
-
-      prepare: t 
-        ? ["5 மில்லி வேம்பெண்ணெய்",
-           "1 லிட்டர் தண்ணீரில் கலக்கவும்",
-           "சிறிது சோப்பு சேர்க்கவும்",
-           "நன்றாக குலுக்கவும்"]
-        : ["5ml neem oil",
-           "Mix in 1 litre water",
-           "Add few soap drops",
-           "Shake well"],
-
-      apply: t 
-        ? "7–10 நாட்களுக்கு ஒருமுறை இலைகளில் தெளிக்கவும்"
-        : "Spray on leaves every 7–10 days",
-
-      timing: t
-        ? ["காலை / மாலை நேரம் சிறந்தது",
-           "மழைக்கு முன் தெளிக்க வேண்டாம்",
-           "நிழல் நேரம் சிறந்தது"]
-        : ["Best time: Morning / Evening",
-           "Avoid spraying before rain",
-           "Shaded time is better"],
-
-      safety: t ? "கண்கள் & வாயில் செல்லாமல் கவனமாக இருக்கவும்"
-                 : "Avoid contact with eyes & mouth",
-
-      benefit: t 
-        ? ["நச்சு இல்லை","மண்ணுக்கும் மனிதனுக்கும் பாதுகாப்பு"]
-        : ["Non-toxic","Safe for soil & humans"]
-    },
-
-
-    worms:{
-      name: t ? "வேர் பூச்சிகள்" : "Root Worms",
-
-      solution: t ? "பூண்டு – மிளகாய் சாரம்" : "Garlic – Chilli Extract",
-
+      name: t?"இலை தின்று பூச்சிகள்":"Leaf Eating Insects",
+      crops: t?"நெல், காய்கறிகள்":"Paddy, Vegetables",
+      img:"https://images.unsplash.com/photo-1592921870957-0e6c87d0d79d",
+      solution: t?"வேம்பெண்ணெய்":"Neem Oil Spray",
       prepare: t
-        ? ["100g பூண்டு அரைக்கவும்",
-           "50g மிளகாய் அரைக்கவும்",
-           "1 லிட்டரில் ஊறவிடவும்",
-           "24 மணி நேரம் வைக்கவும்"]
-        : ["Grind 100g garlic",
-           "Grind 50g chilli",
-           "Soak in 1 litre water",
-           "Keep 24 hrs"],
-
-      apply: t ? "வேரின் அருகில் ஊற்றவும்"
-               : "Apply near root area",
-
-      timing: t
-        ? ["காலை நேரம் சிறப்பு",
-           "3–4 நாட்களுக்கு ஒருமுறை",
-           "மழையில்லா நாள் சிறந்தது"]
-        : ["Morning preferred",
-           "Repeat every 3–4 days",
-           "Avoid rainy time"],
-
-      safety: t ? "கண்களில் படாமல் கவனம்"
-                 : "Avoid eye contact",
-
-      benefit: t ? ["வேர் பாதுகாப்பு","தாக்குதல் குறையும்"]
-                 : ["Root protection","Reduces infestation"]
+        ? ["5 மில்லி வேம்பெண்ணெய்","1 லிட்டர் நீர்","2 துளி சோப்பு","நன்றாக கலக்கவும்"]
+        : ["5ml neem oil","1L water","2 soap drops","Mix well"],
+      apply: t?"7 நாட்களுக்கு ஒருமுறை":"Once in 7 days",
+      result: t?"3–5 நாட்கள்":"3–5 days"
     },
 
+    aphids:{
+      name: t?"அஃபிட்ஸ்":"Aphids",
+      crops: t?"பருத்தி, மிளகாய்":"Cotton, Chilli",
+      img:"https://images.unsplash.com/photo-1506808547685-e2ba962ded58",
+      solution: t?"சோப்பு நீர்":"Soap Water",
+      prepare: t
+        ? ["10g சோப்பு","1 லிட்டர் நீர்"]
+        : ["10g soap","1L water"],
+      apply: t?"இலை அடிப்பகுதி":"Leaf underside",
+      result: t?"2–3 நாட்கள்":"2–3 days"
+    },
 
     fungus:{
-      name: t ? "பூஞ்சை நோய்" : "Fungal Disease",
-
-      solution: t ? "மோர் தெளிப்பு" : "Buttermilk Spray",
-
+      name: t?"பூஞ்சை நோய்":"Fungal Disease",
+      crops: t?"நெல், வாழை":"Paddy, Banana",
+      img:"https://images.unsplash.com/photo-1592924357228-91a6f63a64f4",
+      solution: t?"மோர் தெளிப்பு":"Buttermilk Spray",
       prepare: t
-        ? ["1 லிட்டர் மோர்",
-           "5 லிட்டர் தண்ணீர்",
-           "48 மணி நேரம் ஊறவிடவும்"]
-        : ["1 litre buttermilk",
-           "5 litre water",
-           "Ferment 48 hrs"],
+        ? ["1 லிட்டர் மோர்","5 லிட்டர் நீர்","48 மணி நேரம் ஊறவிடவும்"]
+        : ["1L buttermilk","5L water","Ferment 48 hrs"],
+      apply: t?"இலைகளில் தெளிக்கவும்":"Spray on leaves",
+      result: t?"5–7 நாட்கள்":"5–7 days"
+    },
 
-      apply: t ? "பாதிக்கப்பட்ட இலைகளில் தெளிக்கவும்"
-               : "Spray infected leaves",
+    stemBorer:{
+      name: t?"தண்டு துளைப்பான்":"Stem Borer",
+      crops: t?"நெல்":"Paddy",
+      img:"https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
+      solution: t?"வேப்ப விதை சாரம்":"Neem Seed Extract",
+      prepare: t
+        ? ["50g வேப்ப விதை","1 லிட்டர் நீர்","12 மணி ஊறவிடவும்"]
+        : ["50g neem seed","1L water","Soak 12 hrs"],
+      apply: t?"தண்டு அருகில்":"Near stem",
+      result: t?"6–8 நாட்கள்":"6–8 days"
+    },
 
-      timing: t
-        ? ["மாலை நேரம்",
-           "மழைக்கு முன் தவிர்க்கவும்",
-           "வாரம் ஒருமுறை"]
-        : ["Evening recommended",
-           "Avoid before rain",
-           "Once weekly"],
-
-      safety: t ? "அதிக அளவு பயன்படுத்த வேண்டாம்"
-                 : "Do not overdose",
-
-      benefit: t ? ["இலை ஆரோக்கியம் மேம்படும்"]
-                 : ["Improves leaf health"]
+    thrips:{
+      name: t?"திரிப்ஸ்":"Thrips",
+      crops: t?"மிளகாய், வெங்காயம்":"Chilli, Onion",
+      img:"https://images.unsplash.com/photo-1528825871115-3581a5387919",
+      solution: t?"புளி நீர்":"Tamarind Water",
+      prepare: t
+        ? ["50g புளி","1 லிட்டர் நீர்"]
+        : ["50g tamarind","1L water"],
+      apply: t?"மாலை நேரம்":"Evening",
+      result: t?"3–4 நாட்கள்":"3–4 days"
     }
-
   };
 
-
-  // ----------- IMAGE UPLOAD ------------
   function handleImage(e){
-    const file = e.target.files[0];
-    if(file){
-      setImage(URL.createObjectURL(file));
-    }
+    const f = e.target.files[0];
+    if(f) setImage(URL.createObjectURL(f));
   }
 
-
-  // ---------- SIMPLE SMART ANALYSIS -------
   function analyzeImage(){
-
     if(!image){
-      alert(t ? "முதலில் படத்தை பதிவேற்றவும்" : "Upload a photo first");
+      alert(t?"முதலில் படம் பதிவேற்றவும்":"Upload image first");
       return;
     }
-
-    if(image.includes("yellow"))
-      setAutoDetect(t?"இலை மஞ்சள் — ஊட்டச்சத்து குறைபாடு இருக்கலாம்"
-                     :"Yellow leaf — nutrient deficiency likely");
-
-    else if(image.includes("hole"))
-      setAutoDetect(t?"இலை துளை — பூச்சி தாக்குதல் இருக்கலாம்"
-                     :"Leaf holes — insects likely");
-
-    else if(image.includes("white"))
-      setAutoDetect(t?"வெள்ளை தழும்பு — பூஞ்சை நோய் இருக்கலாம்"
-                     :"White patches — fungal infection");
-
-    else
-      setAutoDetect(t?"துல்லியமாக கண்டறிய முடியவில்லை — பட்டியலில் இருந்து தேர்வு செய்க"
-                     :"Cannot detect clearly — choose from list");
+    setAutoDetect(t
+      ? "AI கணிப்பு: பூச்சி இருக்கலாம்"
+      : "AI prediction: Pest likely");
   }
-
-
 
   return(
     <div style={styles.page}>
-
       <div style={styles.mobile}>
 
         <BottomNav />
 
-
-        <h2 style={{textAlign:"center"}}>
-          {t ? "இயற்கை பூச்சி கட்டுப்பாடு" : "Natural Pest Control"}
+        <h2 style={{color:"#fff",textAlign:"center"}}>
+          {t?"இயற்கை பூச்சி கட்டுப்பாடு":"Natural Pest Control"}
         </h2>
 
-
-        {/* ---------- UPLOAD --------- */}
+        {/* 🌦 SEASON CALENDAR */}
         <div style={styles.card}>
-          <h3>📸 {t?"இலை படத்தை பதிவேற்றவும்":"Upload Leaf Photo"}</h3>
-
-          <input type="file" accept="image/*" onChange={handleImage} />
-
-          {image && (
-            <img src={image}
-              style={{width:"100%",borderRadius:12,marginTop:10}} />
-          )}
-
-          <button
-            onClick={analyzeImage}
-            style={styles.button}>
-            {t?"பிரச்சனை கண்டறி":"Analyze Problem"}
-          </button>
-
-          {autoDetect && (
-            <div style={{marginTop:8,color:"#0a7f2e"}}>
-              🔍 {autoDetect}
-            </div>
-          )}
+          <h3>🗓 {t?"இந்த பருவத்தில் வரும் பூச்சிகள்":"Season-wise Pest Calendar"}</h3>
+          <p style={{fontWeight:"bold"}}>
+            {season==="kharif" && (t?"காரிஃப் (மழைக்காலம்)":"Kharif (Monsoon)")}
+            {season==="rabi" && (t?"ரபி (குளிர்காலம்)":"Rabi (Winter)")}
+            {season==="summer" && (t?"வெயில்காலம்":"Summer")}
+          </p>
+          <ul>
+            {seasonCalendar[season]?.map((p,i)=>(
+              <li key={i}>🐛 {p}</li>
+            ))}
+          </ul>
         </div>
 
+        {/* IMAGE UPLOAD */}
+        <div style={styles.card}>
+          <input type="file" accept="image/*" onChange={handleImage}/>
+          {image && <img src={image} style={styles.preview}/>}
+          <button style={styles.button} onClick={analyzeImage}>
+            {t?"AI கண்டறி":"Analyze"}
+          </button>
+          {autoDetect && <p>{autoDetect}</p>}
+        </div>
 
-
-        {/* ------------ SELECT ----------- */}
-        <select
-          style={styles.input}
-          value={pest}
-          onChange={e=>setPest(e.target.value)}
-        >
-          <option value="">
-            {t?"பிரச்சனையை தேர்வு செய்க":"Select Problem"}
-          </option>
-
-          <option value="insects">{t?"இலை பூச்சி":"Leaf Insects"}</option>
-          <option value="worms">{t?"வேர் பூச்சி":"Root Pests"}</option>
-          <option value="fungus">{t?"பூஞ்சை நோய்":"Fungal Disease"}</option>
+        {/* SELECT */}
+        <select style={styles.input} value={pest} onChange={e=>setPest(e.target.value)}>
+          <option value="">{t?"பிரச்சனை தேர்வு":"Select Pest"}</option>
+          {Object.keys(data).map(k=>(
+            <option key={k} value={k}>{data[k].name}</option>
+          ))}
         </select>
 
-
-
-        {/* -------- DETAILS -------- */}
+        {/* DETAILS */}
         {pest && (
-          <div>
+          <div style={styles.card}>
+            <img src={data[pest].img} style={styles.cropImg}/>
+            <h3>🐛 {data[pest].name}</h3>
+            <p>🌾 {t?"பாதிக்கும் பயிர்கள்":"Affected Crops"}: {data[pest].crops}</p>
+            <p>🌿 {t?"தீர்வு":"Solution"}: {data[pest].solution}</p>
 
-            <div style={styles.card}>
-              <h3>🐛 {data[pest].name}</h3>
-            </div>
+            <h4>🧪 {t?"தயாரிப்பு முறை":"Preparation"}</h4>
+            <ol>
+              {data[pest].prepare.map((s,i)=>(<li key={i}>{s}</li>))}
+            </ol>
 
-            <div style={styles.card}>
-              <h3>🌿 {t?"இயற்கை தீர்வு":"Natural Solution"}</h3>
-              <p>{data[pest].solution}</p>
-            </div>
+            <p>⏳ {t?"விளைவு":"Result"}: {data[pest].result}</p>
 
-            <div style={styles.card}>
-              <h3>🧪 {t?"தயாரிப்பு முறை":"Preparation"}</h3>
-              <ol>
-                {data[pest].prepare.map((s,i)=>(<li key={i}>{s}</li>))}
-              </ol>
-            </div>
-
-            <div style={styles.card}>
-              <h3>📏 {t?"பயன்படுத்துவது எப்படி?":"How to Apply?"}</h3>
-              <p>{data[pest].apply}</p>
-            </div>
-
-            <div style={styles.card}>
-              <h3>⏰ {t?"எப்போது பயன்படுத்தலாம்?":"When to Use?"}</h3>
-              <ul>{data[pest].timing.map((x,i)=>(<li key={i}>{x}</li>))}</ul>
-            </div>
-
-            <div style={styles.card}>
-              <h3>🌱 {t?"பயன்கள்":"Benefits"}</h3>
-              <ul>{data[pest].benefit.map((x,i)=>(<li key={i}>{x}</li>))}</ul>
-            </div>
-
-            <div style={styles.card}>
-              <h3>⚠ {t?"பாதுகாப்பு அறிவுரை":"Safety Advice"}</h3>
-              <p>{data[pest].safety}</p>
-            </div>
-
+            <button
+              style={{...styles.button,background:"#1b5e20"}}
+              onClick={()=>speak(`${data[pest].name} ${data[pest].solution}`)}
+            >
+              🔊 {t?"கேட்க":"Listen"}
+            </button>
           </div>
         )}
 
-        {!pest && (
-          <p style={{opacity:.6}}>
-            {t?"மேல் பட்டியலில் இருந்து தேர்வு செய்க"
-               :"Please choose from above list"}
-          </p>
-        )}
+        <button style={styles.back} onClick={()=>navigate("/home")}>
+          ⬅ {t?"முகப்பு":"Back to Home"}
+        </button>
 
       </div>
     </div>
   );
 }
 
-
-
-
-// ------------ STYLES --------------
+/* ---------------- STYLES ---------------- */
 const styles={
-
   page:{
     minHeight:"100vh",
     display:"flex",
     justifyContent:"center",
     alignItems:"center",
-    background:"#e5f6e5"
+    backgroundImage:
+      "url('https://images.unsplash.com/photo-1592921870957-0e6c87d0d79d')",
+    backgroundSize:"cover",
+    backgroundPosition:"center"
   },
-
   mobile:{
     width:"100%",
     maxWidth:420,
-    background:"#259125ff",
-    borderRadius:20,
-    padding:16,
-    boxShadow:"0 18px 40px rgba(0,0,0,.18)",
-    margin:"10px"
+    background:"rgba(0,80,0,0.85)",
+    borderRadius:22,
+    padding:16
   },
-
-  input:{
-    width:"100%",
-    padding:10,
-    borderRadius:12,
-    border:"1px solid #ccc",
-    marginBottom:12
-  },
-
-  card:{
-    background:"#f7fff7",
-    borderRadius:16,
-    padding:14,
-    marginBottom:12,
-    border:"1px solid #d8efd8"
-  },
-
-  button:{
-    marginTop:10,
-    padding:10,
-    borderRadius:10,
-    background:"#2e8b3d",
-    color:"white",
-    border:"none",
-    cursor:"pointer"
-  }
+  input:{width:"100%",padding:10,borderRadius:12,marginBottom:12},
+  card:{background:"#e8ffe8",borderRadius:16,padding:14,marginBottom:12},
+  preview:{width:"100%",borderRadius:12,marginTop:10},
+  cropImg:{width:"100%",borderRadius:12,marginBottom:8},
+  button:{width:"100%",padding:10,borderRadius:12,background:"#2e8b3d",color:"#fff",border:"none",marginTop:8},
+  back:{width:"100%",padding:10,borderRadius:12,background:"#145a32",color:"#fff",border:"none",marginTop:10}
 };

@@ -11,7 +11,10 @@ export default function Jobs(){
 
       <div style={styles.mobile}>
 
-        <button style={styles.back} onClick={()=>navigate("/")}>⬅ Home</button>
+        {/* ✅ BACK TO HOME */}
+        <button style={styles.back} onClick={()=>navigate("/home")}>
+          ⬅ Home
+        </button>
 
         <h2 style={{textAlign:"center"}}>
           👨‍🌾 வேலை வாய்ப்புகள்
@@ -35,9 +38,7 @@ export default function Jobs(){
         </div>
 
 
-        {/* ==========================
-             EDUCATION JOBS
-        ========================== */}
+        {/* EDUCATION JOBS */}
         {tab==="edu" && (
           <div>
 
@@ -77,9 +78,7 @@ export default function Jobs(){
         )}
 
 
-        {/* ==========================
-             GENERAL JOBS
-        ========================== */}
+        {/* GENERAL JOBS */}
         {tab==="gen" && (
           <div>
 
@@ -135,6 +134,8 @@ function JobCard({title,edu,age,pay,type}){
       <button style={styles.apply}>
         🔗 Apply / Contact Info (Coming Soon)
       </button>
+
+      
     </div>
   );
 }
@@ -165,7 +166,8 @@ const styles={
     background:"none",
     fontSize:16,
     marginBottom:5,
-    cursor:"pointer"
+    cursor:"pointer",
+    fontWeight:"bold"
   },
 
   tabs:{
