@@ -1,6 +1,7 @@
 import BottomNav from "../components/BottomNav";
 import { useLanguage } from "../LanguageContext";
 import { useNavigate } from "react-router-dom";
+import bgImage from "../assets/image copy 8.png";
 
 export default function Videos() {
 
@@ -24,8 +25,12 @@ export default function Videos() {
   ];
 
   return (
-    <div style={styles.page}>
+    <div style={styles.screen}>
 
+      {/* BACKGROUND OVERLAY */}
+      <div style={styles.overlay}></div>
+
+      {/* CONTENT */}
       <div style={styles.mobile}>
 
         <BottomNav />
@@ -50,7 +55,7 @@ export default function Videos() {
           ))}
         </div>
 
-        {/* ✅ BACK BUTTON (ADDED ONLY THIS) */}
+        {/* BACK BUTTON */}
         <button
           style={styles.back}
           onClick={() => navigate("/home")}
@@ -64,24 +69,39 @@ export default function Videos() {
 }
 
 
+/* ================= STYLES ================= */
+
 const styles = {
 
-  page:{
-    minheight:"100vh",
+  screen:{
+    position:"fixed",
+    inset:0,
+    backgroundImage:`url(${bgImage})`,
+    backgroundSize:"cover",
+    backgroundPosition:"center",
     display:"flex",
     justifyContent:"center",
-    alignItems:"center",
-    background:"#e5f6e5"
+    alignItems:"center"
+  },
+
+  overlay:{
+    position:"absolute",
+    inset:0,
+    background:"rgba(0,100,0,0.6)",
+    zIndex:1
   },
 
   mobile:{
+    position:"relative",
+    zIndex:2,
     width:"100%",
-    maxWidth:420,
-    background:"#259125ff",
+    maxWidth:600,
+    maxHeight:"90vh",
+    overflowY:"auto",
+    background:"rgba(75, 199, 27, 0.95)",
     borderRadius:22,
-    boxShadow:"0 18px 45px rgba(0,0,0,.18)",
-    padding:18,
-    margin:"0 10px"
+    padding:16,
+    boxShadow:"0 18px 40px rgba(0,0,0,.3)"
   },
 
   header:{
@@ -95,8 +115,7 @@ const styles = {
   },
 
   scrollArea:{
-    overflowY:"auto",
-    paddingRight:6
+    marginBottom:10
   },
 
   card:{
@@ -119,7 +138,6 @@ const styles = {
     borderRadius:10
   },
 
-  /* ✅ BACK BUTTON STYLE (ADDED ONLY THIS) */
   back:{
     width:"100%",
     marginTop:12,

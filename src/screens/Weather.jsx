@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../LanguageContext";
+import bgImage from "../assets/image copy 3.png"; // ✅ BACKGROUND IMAGE
 
 const API_KEY = "5b5ff156792b20ec190acb8be8302c57";
 
@@ -30,9 +31,7 @@ export default function Weather(){
 
   // ---------- ON LOAD ----------
   useEffect(()=>{
-
     navigator.geolocation.getCurrentPosition(async(pos)=>{
-
       const w = await getWeather(pos.coords.latitude,pos.coords.longitude);
       setData(w);
       setLoading(false);
@@ -43,16 +42,14 @@ export default function Weather(){
 
       speak(msg);
     });
-
   },[]);
 
-
   if(loading) return (
-    <div style={styles.page}>
+    <div style={styles.screen}>
+      <div style={styles.bgOverlay}></div>
       <div style={styles.box}>Loading...</div>
     </div>
   );
-
 
   const temp = Math.round(data.main.temp);
   const hum = data.main.humidity;
@@ -60,7 +57,10 @@ export default function Weather(){
   const rain = data.weather[0].main === "Rain";
 
   return(
-    <div style={styles.page}>
+    <div style={styles.screen}>
+
+      {/* GREEN OVERLAY */}
+      <div style={styles.bgOverlay}></div>
 
       <div style={styles.box}>
 
@@ -81,7 +81,7 @@ export default function Weather(){
           <div style={styles.card}>🌧 {t?"மழை நிலை":"Rain"}: {rain ? "Yes" : "No"}</div>
         </div>
 
-        {/* 🔔 WEATHER ADVICE */}
+        {/* WEATHER ADVICE */}
         <div style={styles.advice}>
           {rain
             ? (t?"இன்று தெளிப்பு செய்ய வேண்டாம் — மழை வாய்ப்பு உள்ளது"
@@ -90,7 +90,7 @@ export default function Weather(){
                  :"Good weather for field work")}
         </div>
 
-        {/* 👨‍🌾 CROP ADVICE */}
+        {/* CROP ADVICE */}
         <div style={styles.advice2}>
           {temp>32
             ? (t?"அதிக வெப்பம் — அதிக நீர்ப்பாய்ச்சி செய்யவும்"
@@ -99,7 +99,7 @@ export default function Weather(){
                  :"Normal temperature — good for crops")}
         </div>
 
-        {/* 🔊 PLAY VOICE */}
+        {/* PLAY VOICE */}
         <button style={styles.voice}
           onClick={()=>speak(
             t?`இன்றைய வெப்பநிலை ${temp} டிகிரி, ஈரப்பதம் ${hum} சதவீதம்`
@@ -109,7 +109,7 @@ export default function Weather(){
           🔊 {t?"குரலில் கேட்க":"Play Voice"}
         </button>
 
-        {/* ⬅ BACK */}
+        {/* BACK */}
         <button style={styles.back}
           onClick={()=>navigate("/home")}
         >
@@ -121,40 +121,55 @@ export default function Weather(){
   );
 }
 
-
+/* ================= STYLES ================= */
 
 const styles={
 
-  page:{
-    minHeight:"100vh",
-    display:"flex",
-    justifyContent:"center",
-    alignItems:"center",
-    background:"linear-gradient(#b5f7b5,#7dda7d)"
-  },
+  /* ✅ FULL SCREEN BACKGROUND */
+  screen:{
+    width:"100vw",
+    height:"100vh",
+    position:"fixed",
+    top:0,
+    left:0,
 
-  box:{
-    width:"92%",
-    maxWidth:420,
-    padding:16,
-    borderRadius:20,
-    backgroundImage:
-
-  
-  "url('https://images.unsplash.com/photo-1554321041-d735df87ccaa')",
-
-
+    backgroundImage:`url(${bgImage})`,
     backgroundSize:"cover",
     backgroundPosition:"center",
-    boxShadow:"0 18px 45px rgba(0,0,0,.25)",
-    color:"white"
+    backgroundRepeat:"no-repeat",
+
+    display:"flex",
+    justifyContent:"center",
+    alignItems:"center"
+  },
+
+  /* GREEN OVERLAY */
+  bgOverlay:{
+    position:"absolute",
+    inset:0,
+    background:"rgba(0,80,30,0.45)",
+    zIndex:1
+  },
+
+  /* MAIN BOX */
+  box:{
+    position:"relative",
+    zIndex:2,
+
+    width:"100%",
+    maxWidth:"500px",
+    background:"rgba(91, 237, 96, 0.85)",
+    padding:16,
+    borderRadius:18,
+    boxShadow:"0 12px 35px rgba(0,0,0,.35)"
   },
 
   hero:{
     textAlign:"center",
     padding:10,
     borderRadius:14,
-    background:"rgba(0,0,0,0.35)"
+    background:"rgba(0,0,0,0.35)",
+    color:"white"
   },
 
   cards:{
@@ -165,7 +180,8 @@ const styles={
     background:"rgba(0,0,0,0.4)",
     padding:8,
     borderRadius:10,
-    marginBottom:6
+    marginBottom:6,
+    color:"white"
   },
 
   advice:{
@@ -191,7 +207,7 @@ const styles={
     marginTop:10,
     borderRadius:10,
     border:"none",
-    background:"#21e261ff",
+    background:"rgb(22, 177, 74)",
     color:"white",
     fontWeight:"bold"
   },

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../LanguageContext";
+import bgImage from "../assets/agricultureimg.png"; // ✅ SAME BG IMAGE
 
 export default function Profile() {
 
@@ -31,15 +32,18 @@ export default function Profile() {
   };
 
   return (
-    <div style={styles.page}>
+    <div style={styles.screen}>   {/* ✅ BACKGROUND IMAGE HERE */}
 
-      {/* CARD WITH IMAGE */}
+      {/* GREEN OVERLAY */}
+      <div style={styles.bgOverlay}></div>
+
+      {/* CARD */}
       <div style={styles.card}>
 
         {/* LIGHT WHITE OVERLAY */}
         <div style={styles.overlay}></div>
 
-        <div style={{position:"relative"}}>
+        <div style={{ position: "relative" }}>
 
           <h2 style={styles.title}>
             {lang === "ta" ? "விவசாயி சுயவிவரம்" : "Farmer Profile"}
@@ -104,40 +108,52 @@ export default function Profile() {
           </button>
 
         </div>
-
       </div>
 
     </div>
   );
 }
 
+/* ================= STYLES ================= */
 
 const styles = {
 
-  page:{
-    minHeight:"100vh",
-    display:"flex",
-    justifyContent:"center",
-    alignItems:"center",
-    background:"#4a9129ff"
+  /* ✅ FULL SCREEN BACKGROUND IMAGE */
+  screen: {
+    width: "100vw",
+    height: "100vh",
+    position: "fixed",
+    top: 0,
+    left: 0,
+
+    backgroundImage: `url(${bgImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+
+  /* GREEN BACKGROUND OVERLAY */
+  bgOverlay: {
+    position: "absolute",
+    inset: 0,
+    background: "rgba(0, 80, 30, 0.45)",
+    zIndex: 1
   },
 
   /* CARD WITH IMAGE */
   card:{
+    position: "relative",
+    zIndex: 2,
+
     width:"92%",
     maxWidth:"420px",
     borderRadius:"20px",
     padding:"22px",
-    boxShadow:"0 8px 28px rgba(246, 233, 53, 0.35)",
-
-   backgroundImage:`url("https://images.unsplash.com/photo-1500674425229-f692875b0ab7")`,
-
-
-    backgroundSize:"cover",
-    backgroundPosition:"center",
-    backgroundRepeat:"no-repeat",
-
-    position:"relative"
+    boxShadow:"0 8px 28px rgba(246, 233, 53, 0.35)"
   },
 
   /* WHITE TRANSPARENT LAYER */
@@ -145,12 +161,12 @@ const styles = {
     position:"absolute",
     inset:0,
     borderRadius:"20px",
-    background:"rgba(90, 237, 104, 0.75)"
+    background:"rgba(33, 125, 12, 0.75)"
   },
 
   title:{
     textAlign:"center",
-    color:"#0b8d2c",
+    color:"#e5efe8",
     marginBottom:"12px",
     position:"relative"
   },

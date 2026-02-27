@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLanguage } from "../LanguageContext";
 import BottomNav from "../components/BottomNav";
 import { useNavigate } from "react-router-dom";
+import bgImage from "../assets/image copy 10.png";
 
 export default function Chatbot(){
 
@@ -20,7 +21,6 @@ export default function Chatbot(){
 
   const [input, setInput] = useState("");
 
-  // ---------- SIMPLE AI LOGIC (DEMO) ----------
   function getBotReply(userText){
     const text = userText.toLowerCase();
 
@@ -54,7 +54,6 @@ export default function Chatbot(){
       : "🤖 I didn’t understand. Please ask clearly.";
   }
 
-  // ---------- SEND MESSAGE ----------
   function send(){
     if(!input.trim()) return;
 
@@ -66,18 +65,20 @@ export default function Chatbot(){
   }
 
   return(
-    <div style={styles.page}>
+    <div style={styles.screen}>
 
+      {/* BACKGROUND OVERLAY */}
+      <div style={styles.overlay}></div>
+
+      {/* CONTENT */}
       <div style={styles.mobile}>
 
         <BottomNav />
 
-        {/* HEADER */}
         <div style={styles.header}>
           🤖 {t ? "AI விவசாய உதவியாளர்" : "AI Farming Assistant"}
         </div>
 
-        {/* CHAT AREA */}
         <div style={styles.chatBox}>
           {messages.map((m,i)=>(
             <div
@@ -93,7 +94,6 @@ export default function Chatbot(){
           ))}
         </div>
 
-        {/* INPUT */}
         <div style={styles.inputBar}>
           <input
             style={styles.input}
@@ -107,7 +107,6 @@ export default function Chatbot(){
           </button>
         </div>
 
-        {/* BACK */}
         <button
           style={styles.back}
           onClick={()=>navigate("/home")}
@@ -120,24 +119,40 @@ export default function Chatbot(){
   );
 }
 
-// ---------- STYLES ----------
+/* ================= STYLES ================= */
+
 const styles={
 
-  page:{
-    minHeight:"100vh",
+  screen:{
+    position:"fixed",
+    inset:0,
+    backgroundImage:`url(${bgImage})`,
+    backgroundSize:"cover",
+    backgroundPosition:"center",
     display:"flex",
     justifyContent:"center",
     alignItems:"center",
-    background:"#e8ffe8"
+    overflow:"hidden"
+  },
+
+  overlay:{
+    position:"absolute",
+    inset:0,
+    background:"rgba(0,100,0,0.6)",
+    zIndex:1
   },
 
   mobile:{
+    position:"relative",
+    zIndex:2,
     width:"100%",
-    maxWidth:420,
-    background:"#1f8f3f",
+    maxWidth:550,
+    maxHeight:"85vh",
+    overflowY:"auto",
+    background:"rgba(16, 163, 38, 0.95)",
     borderRadius:22,
-    padding:14,
-    boxShadow:"0 18px 40px rgba(0,0,0,.2)"
+    padding:16,
+    boxShadow:"0 18px 40px rgba(0,0,0,.3)"
   },
 
   header:{
@@ -151,7 +166,7 @@ const styles={
   },
 
   chatBox:{
-    background:"#f4fff4",
+    background:"#7ff671",
     height:300,
     borderRadius:14,
     padding:10,
@@ -178,7 +193,7 @@ const styles={
     flex:1,
     padding:10,
     borderRadius:12,
-    border:"1px solid #ccc"
+    border:"1px solid #54d61c"
   },
 
   send:{

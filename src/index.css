@@ -6,5 +6,7 @@
 
 /* page background */
 body {
-  background-color: #eaf7e6;
+  margin: 0;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: #eef1f5;
 }

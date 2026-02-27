@@ -1,114 +1,122 @@
 import { useLanguage } from "../LanguageContext";
 import { useNavigate } from "react-router-dom";
 
-export default function Language(){
+/* ✅ WINDOWS PATH NOT USED
+   ✅ PROJECT RELATIVE IMPORT USED */
+import bgImage from "../assets/agricultureimg.png";
+
+export default function Language() {
 
   const { lang, changeLang } = useLanguage();
   const navigate = useNavigate();
 
-  function tamil(){ changeLang("ta"); }
-  function english(){ changeLang("en"); }
+  function tamil() { changeLang("ta"); }
+  function english() { changeLang("en"); }
+  function goNext() { navigate("/profile"); }
+  function goBack() { navigate(-1); }
 
-  function goNext(){ navigate("/profile"); }
+  return (
+    <div style={styles.screen}>
 
-  return(
-    <div style={styles.page}>
-
-      {/* Green overlay */}
       <div style={styles.overlay}></div>
 
-      {/* Main Box */}
       <div style={styles.box}>
-
-        <h2 style={{marginBottom:12}}>
-          {lang==="ta" ? "மொழியை தேர்வு செய்க" : "Select Language"}
+        <h2>
+          {lang === "ta" ? "மொழியை தேர்வு செய்க" : "Select Language"}
         </h2>
 
-        <button style={styles.btn} onClick={tamil}>
-          தமிழ்
-        </button>
+        <button style={styles.btn} onClick={tamil}>தமிழ்</button>
+        <button style={styles.btn} onClick={english}>English</button>
 
-        <button style={styles.btn} onClick={english}>
-          English
-        </button>
-
-        <p style={{fontWeight:"bold"}}>
-          {lang==="ta" ? "தேர்ந்தெடுத்த மொழி: தமிழ்" : "Selected: English"}
+        <p style={{ fontWeight: "bold" }}>
+          {lang === "ta" ? "தேர்ந்தெடுத்த மொழி: தமிழ்" : "Selected: English"}
         </p>
 
         <button style={styles.next} onClick={goNext}>
-          {lang==="ta" ? "தொடரவும்" : "Continue"}
+          {lang === "ta" ? "தொடரவும்" : "Continue"}
         </button>
-
       </div>
+
+      <button style={styles.backBtn} onClick={goBack}>
+        ← Back
+      </button>
 
     </div>
   );
 }
 
+/* ================= STYLES ================= */
 
+const styles = {
 
-const styles={
+  /* ✅ BACKGROUND IMAGE SET HERE */
+  screen: {
+  width: "100vw",          // ✅ full desktop width
+  height: "100vh",         // ✅ full desktop height
 
-  /* FULL SCREEN PAGE */
-  page:{
-    height:"100vh",
-    width:"100%",
-    display:"flex",
-    justifyContent:"center",
-    alignItems:"center",
+  backgroundImage: `url(${bgImage})`,
+  backgroundSize: "cover", // fill screen
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center center",
 
-    /* Farming background image */
-    backgroundImage:`url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6")`,
-    backgroundSize:"cover",
-    backgroundPosition:"center",
-    position:"relative"
+  position: "fixed",       // ✅ IMPORTANT
+  top: 0,
+  left: 0,
+
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+}
+,
+
+  overlay: {
+    position: "absolute",
+    inset: 0,
+    background: "rgba(0, 90, 40, 0.45)",
+    zIndex: 1
   },
 
-  /* Green transparent overlay */
-  overlay:{
-    position:"absolute",
-    top:0,
-    left:0,
-    right:0,
-    bottom:0,
-    background:"rgba(0,100,30,0.45)"
+  box: {
+    position: "relative",
+    zIndex: 2,
+    background: "#57f581ff",
+    padding: 22,
+    borderRadius: 18,
+    width: 380,
+    textAlign: "center",
+    boxShadow: "0 12px 30px rgba(0,0,0,.35)"
   },
 
-  /* WHITE CARD */
-  box:{
-    position:"relative",
-    background:"#57f581ff",
-    padding:22,
-    borderRadius:18,
-    boxShadow:"0 12px 30px rgba(0,0,0,.35)",
-    textAlign:"center",
-    width:320
+  btn: {
+    width: "100%",
+    padding: 12,
+    marginBottom: 10,
+    borderRadius: 12,
+    fontWeight: "bold",
+    background: "rgb(14, 130, 45)"
   },
 
-  /* Language buttons */
-  btn:{
-    width:"100%",
-    padding:12,
-    marginBottom:10,
-    borderRadius:12,
-    border:"1px solid #ccc",
-    fontSize:16,
-    fontWeight:"bold",
-    background:"#20bb4aff"
+  next: {
+    width: "100%",
+    padding: 12,
+    marginTop: 10,
+    borderRadius: 12,
+    fontWeight: "bold",
+    background: "rgb(12, 130, 43)",
+    color: "white"
   },
 
-  /* Continue button */
-  next:{
-    width:"100%",
-    padding:12,
-    background:"#20bb4aff",
-    color:"white",
-    border:"none",
-    borderRadius:12,
-    fontWeight:"bold",
-    marginTop:10,
-    fontSize:16,
-    boxShadow:"0 3px 10px rgba(0,0,0,.25)"
+  backBtn: {
+    position: "fixed",
+    bottom: 100,
+    left: "50%",
+    transform: "translateX(-50%)",
+    padding: "10px 22px",
+    borderRadius: 24,
+    border: "none",
+    fontWeight: "bold",
+    background: "white",
+    cursor: "pointer",
+    zIndex: 3
   }
 };

@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { useLanguage } from "../LanguageContext";
 import BottomNav from "../components/BottomNav";
+import { useNavigate } from "react-router-dom";
+import bgImage from "../assets/image copy 11.png";
 
 export default function CropPlanner(){
 
   const { lang } = useLanguage();
   const t = lang === "ta";
+  const navigate = useNavigate();
 
   const [season, setSeason] = useState("");
   const [crop, setCrop] = useState("");
 
-  // ⭐ DATA
   const crops = {
 
     kharif:[
@@ -34,19 +36,19 @@ export default function CropPlanner(){
       {name:"Green gram", ta:"பாசிப்பயறு", soil:"Light soil", water:"Low", days:"60–75", gains:"Restores soil", next:"Wheat", tip:"Good for drylands"},
       {name:"Sesame", ta:"எள்ளு", soil:"Well drained", water:"Low", days:"90–110", gains:"Deep roots loosen soil", next:"Vegetables", tip:"Avoid heavy rains"},
     ]
-
   };
 
-
-  const selected = season==="kharif" ? crops.kharif
-                 : season==="rabi" ? crops.rabi
-                 : season==="summer" ? crops.summer
-                 : [];
-
+  const selected =
+    season==="kharif" ? crops.kharif :
+    season==="rabi" ? crops.rabi :
+    season==="summer" ? crops.summer : [];
 
   return(
-    <div style={styles.page}>
-      <div style={styles.mobile}>
+    <div style={styles.screen}>
+
+      <div style={styles.overlay}></div>
+
+      <div style={styles.container}>
 
         <BottomNav />
 
@@ -58,7 +60,6 @@ export default function CropPlanner(){
           {t ? "காலத்தை தேர்வு செய்க" : "Select a growing season"}
         </p>
 
-        {/* SEASON BUTTONS */}
         <div style={styles.row}>
           <button style={btn} onClick={()=>{setSeason("kharif");setCrop("")}}>
             🌧 {t?"காரிப் (ஜூன்–அக்)":"Kharif (Jun–Oct)"}
@@ -73,32 +74,20 @@ export default function CropPlanner(){
           </button>
         </div>
 
-
-        {/* CROP LIST */}
         {season && (
           <div style={styles.card}>
-            <h3>
-              {t?"பயிர் பட்டியல்":"Crop List"}
-            </h3>
+            <h3>{t?"பயிர் பட்டியல்":"Crop List"}</h3>
 
             {selected.map((c,i)=>(
-
-              <div key={i} style={styles.crop}
-                onClick={()=>setCrop(c)}>
-
+              <div key={i} style={styles.crop} onClick={()=>setCrop(c)}>
                 🌾 {t?c.ta:c.name}
               </div>
-
             ))}
-
           </div>
         )}
 
-
-        {/* DETAILS */}
         {crop && (
           <div style={styles.card}>
-
             <h3>🌾 {t?crop.ta:crop.name}</h3>
 
             <p>🧑‍🌾 {t?"மண் வகை":"Best Soil"}: {crop.soil}</p>
@@ -108,36 +97,63 @@ export default function CropPlanner(){
             <p>🔁 {t?"அடுத்து விதைக்கலாம்":"Next Crop"}: {crop.next}</p>
 
             <p>💡 {t?"லாப அறிவுரை":"Profit Tip"}:</p>
-
             <b>{crop.tip}</b>
-
           </div>
         )}
+
+        <button style={styles.back} onClick={()=>navigate("/home")}>
+          ⬅ {t ? "முகப்பு" : "Back to Home"}
+        </button>
 
       </div>
     </div>
   );
 }
 
-
+/* ================= STYLES ================= */
 
 const styles={
 
-  page:{
-    minHeight:"100vh",
+  screen:{
+    position:"fixed",
+    inset:0,
+    backgroundImage:`url(${bgImage})`,
+    backgroundSize:"cover",
+    backgroundPosition:"center",
     display:"flex",
     justifyContent:"center",
     alignItems:"center",
-    background:"#e9ffe9"
+    overflow:"hidden"
   },
 
-  mobile:{
-    width:"95%",
-    maxWidth:430,
-    background:"green",
-    borderRadius:20,
-    padding:16,
-    boxShadow:"0 12px 35px rgba(0,0,0,.15)"
+  overlay:{
+    position:"absolute",
+    inset:0,
+    background:"rgba(0,100,0,0.6)",
+    zIndex:1
+  },
+
+  container:{
+    position:"relative",
+    zIndex:2,
+    width:"100%",
+    maxWidth:620,           // ✅ WEB WIDTH
+    maxHeight:"85vh",
+    overflowY:"auto",
+    background:"rgba(229, 237, 229, 0.95)",
+    borderRadius:24,
+    padding:20,
+    boxShadow:"0 18px 45px rgba(0,0,0,.35)"
+  },
+
+  back:{
+    border:"none",
+    background:"transparent",
+    fontSize:16,
+    fontWeight:"bold",
+    cursor:"pointer",
+    marginTop:12,
+    color:"#145a32"
   },
 
   row:{
@@ -148,26 +164,26 @@ const styles={
   },
 
   card:{
-    background:"#f5fff5",
+    background:"rgb(13, 214, 13)",
     padding:12,
     borderRadius:16,
     marginTop:10
   },
+
   crop:{
     padding:10,
-    background:"#d9ffe0",
+    background:"rgba(195, 246, 221, 0.9)",
     borderRadius:10,
     marginBottom:6,
     cursor:"pointer"
   }
 };
 
-
 const btn ={
   padding:10,
   borderRadius:12,
   border:"none",
-  background:"#26c44f",
+  background:"#12d346ff",
   color:"#000",
   fontWeight:"bold"
 };

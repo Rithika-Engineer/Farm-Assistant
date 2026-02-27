@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useLanguage } from "../LanguageContext";
 import { useNavigate } from "react-router-dom";
+import bgImage from "../assets/agricultureimg.png";
 
 export default function VoiceAssistant(){
 
   const { lang } = useLanguage();
   const t = lang === "ta";
-  const navigate = useNavigate();   // ✅ added
+  const navigate = useNavigate();
 
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -27,70 +28,41 @@ export default function VoiceAssistant(){
   }
 
   function reply(q){
-
     const text = q.toLowerCase();
     let res = "";
 
-    // ------------ TAMIL MODE ------------
     if(t){
-
       if(text.includes("மழை") || text.includes("வானிலை"))
         res = "இன்று மழை வாய்ப்பு உள்ளது. இன்று தெளிப்பு செய்ய வேண்டாம்.";
-
-      else if(text.includes("உரம்") || text.includes("fertilizer"))
+      else if(text.includes("உரம்"))
         res = "மண் பரிசோதனை செய்து தேவையான உரம் மட்டும் பயன்படுத்தவும்.";
-
-      else if(text.includes("நீர்") || text.includes("பாசனம்"))
+      else if(text.includes("நீர்"))
         res = "காலை அல்லது மாலை நேரத்தில் பாசனம் செய்வது சிறந்தது.";
-
-      else if(text.includes("பூச்சி") || text.includes("வண்டு"))
+      else if(text.includes("பூச்சி"))
         res = "வேம்பெண்ணெய் தெளிப்பு இயற்கையான பூச்சி கட்டுப்பாடு ஆகும்.";
-
       else if(text.includes("விதை"))
         res = "சான்றளிக்கப்பட்ட தரமான விதைகள் பயன்படுத்தவும்.";
-
-      else if(text.includes("அரசு திட்டம்"))
+      else if(text.includes("அரசு"))
         res = "அருகிலுள்ள விவசாய அலுவலகத்தை தொடர்பு கொள்ளவும்.";
-
-      else if(text.includes("லாபம்") || text.includes("இழப்பு"))
+      else if(text.includes("லாபம்"))
         res = "செலவு மற்றும் வருமானத்தை பதிவு செய்து கணக்கிடுங்கள்.";
-
-      else if(text.includes("நன்றி"))
-        res = "நன்றி! நான் எப்போதும் உதவ தயாராக இருக்கிறேன்.";
-
       else
-        res = "உங்கள் கேள்வி புரிந்தது. தயவு செய்து தெளிவாக மீண்டும் கேளுங்கள்.";
-    }
-
-    // ------------ ENGLISH MODE ------------
-    else {
-
+        res = "உங்கள் கேள்வி புரிந்தது. தெளிவாக மீண்டும் கேளுங்கள்.";
+    } else {
       if(text.includes("rain") || text.includes("weather"))
-        res = "There is a chance of rain today. Avoid spraying chemicals.";
-
+        res = "There is a chance of rain today. Avoid spraying.";
       else if(text.includes("fertilizer"))
-        res = "Do soil testing first and use only required fertilizer.";
-
-      else if(text.includes("water") || text.includes("irrigation"))
-        res = "Water crops in the morning or evening only.";
-
-      else if(text.includes("pest") || text.includes("insect"))
-        res = "Neem oil spray is a natural and safe pest control.";
-
+        res = "Do soil testing and apply only required fertilizer.";
+      else if(text.includes("water"))
+        res = "Water crops in the morning or evening.";
+      else if(text.includes("pest"))
+        res = "Neem oil spray is a safe natural solution.";
       else if(text.includes("seed"))
-        res = "Use certified seeds for better crop yield.";
-
-      else if(text.includes("scheme") || text.includes("government"))
+        res = "Use certified quality seeds.";
+      else if(text.includes("scheme"))
         res = "Please contact your nearest agriculture office.";
-
-      else if(text.includes("profit") || text.includes("loss"))
-        res = "Record all expenses and income to calculate profit.";
-
-      else if(text.includes("thank"))
-        res = "You’re welcome! Happy farming.";
-
       else
-        res = "I understand your question. Please ask clearly.";
+        res = "I understand. Please ask clearly.";
     }
 
     setAnswer(res);
@@ -98,14 +70,12 @@ export default function VoiceAssistant(){
   }
 
   function startListening(){
-
     if(!recognition){
       alert("Speech not supported in this browser");
       return;
     }
 
     recognition.start();
-
     recognition.onresult = (e)=>{
       let text = e.results[0][0].transcript;
       setQuestion(text);
@@ -114,9 +84,11 @@ export default function VoiceAssistant(){
   }
 
   return(
-    <div style={page}>
+    <div style={styles.screen}>
 
-      <div style={mobile}>
+      <div style={styles.overlay}></div>
+
+      <div style={styles.container}>
 
         <h2 style={{textAlign:"center"}}>
           {t ? "விவசாய குரல் உதவியாளர்" : "Farmer Voice Assistant"}
@@ -126,26 +98,22 @@ export default function VoiceAssistant(){
           {t ? "உங்கள் கேள்வியை பேசுங்கள்" : "Speak your question"}
         </p>
 
-        {/* MIC BUTTON */}
-        <button style={micBtn} onClick={startListening}>
+        <button style={styles.micBtn} onClick={startListening}>
           🎤 {t ? "பேச ஆரம்பியுங்கள்" : "Start Talking"}
         </button>
 
-        {/* QUESTION */}
-        <div style={card}>
+        <div style={styles.card}>
           <h4>{t ? "உங்கள் கேள்வி" : "Your Question"}</h4>
           <p>{question || (t?"இங்கே தோன்றும்":"Will appear here")}</p>
         </div>
 
-        {/* ANSWER */}
-        <div style={card}>
+        <div style={styles.card}>
           <h4>{t ? "பதில்" : "Answer"}</h4>
           <p>{answer || (t?"இங்கே தோன்றும்":"Will appear here")}</p>
         </div>
 
-        {/* ✅ BACK BUTTON */}
         <button
-          style={backBtn}
+          style={styles.backBtn}
           onClick={()=>navigate("/home")}
         >
           ⬅ {t ? "முகப்பு" : "Back to Home"}
@@ -156,51 +124,69 @@ export default function VoiceAssistant(){
   );
 }
 
-/* ---------- STYLES ---------- */
+/* ================= STYLES ================= */
 
-const page = {
-  minHeight:"100vh",
-  display:"flex",
-  justifyContent:"center",
-  alignItems:"center",
-  background:"#eafbe8"
-};
+const styles={
 
-const mobile = {
-  maxWidth:440,
-  width:"95%",
-  background:"green",
-  borderRadius:18,
-  padding:18,
-  boxShadow:"0 12px 35px rgba(0,0,0,.15)"
-};
+  screen:{
+    position:"fixed",
+    inset:0,
+    backgroundImage:`url(${bgImage})`,
+    backgroundSize:"cover",
+    backgroundPosition:"center",
+    display:"flex",
+    justifyContent:"center",
+    alignItems:"center",
+    overflow:"hidden"
+  },
 
-const card = {
-  background:"#f6fff6",
-  padding:12,
-  borderRadius:14,
-  marginTop:10,
-  border:"1px solid #cfeccc"
-};
+  overlay:{
+    position:"absolute",
+    inset:0,
+    background:"rgba(0,100,0,0.6)",
+    zIndex:1
+  },
 
-const micBtn = {
-  width:"100%",
-  padding:14,
-  background:"#1cb43a",
-  color:"white",
-  fontSize:18,
-  border:"none",
-  borderRadius:14,
-  margin:"12px 0"
-};
+  container:{
+    position:"relative",
+    zIndex:2,
+    width:"100%",
+    maxWidth:520,
+    maxHeight:"85vh",
+    overflowY:"auto",
+    background:"rgba(38, 219, 65, 0.95)",
+    borderRadius:22,
+    padding:20,
+    boxShadow:"0 18px 40px rgba(0,0,0,.35)"
+  },
 
-const backBtn = {
-  width:"100%",
-  padding:12,
-  background:"#145a32",
-  color:"white",
-  fontSize:16,
-  border:"none",
-  borderRadius:14,
-  marginTop:12
+  card:{
+    background:"#f6fff6",
+    padding:12,
+    borderRadius:14,
+    marginTop:10,
+    border:"1px solid #cfeccc"
+  },
+
+  micBtn:{
+    width:"100%",
+    padding:14,
+    background:"#0f8c28",
+    color:"white",
+    fontSize:18,
+    border:"none",
+    borderRadius:14,
+    margin:"12px 0"
+  },
+
+  backBtn:{
+    width:"100%",
+    padding:12,
+    background:"#145a32",
+    color:"white",
+    fontSize:16,
+    border:"none",
+    borderRadius:14,
+    marginTop:12
+  }
 };

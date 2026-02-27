@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import bgImage from "../assets/image copy 9.png";
 
 export default function Jobs(){
 
@@ -7,11 +8,15 @@ export default function Jobs(){
   const [tab, setTab] = useState("edu");
 
   return(
-    <div style={styles.page}>
+    <div style={styles.screen}>
 
-      <div style={styles.mobile}>
+      {/* BACKGROUND OVERLAY */}
+      <div style={styles.overlay}></div>
 
-        {/* ✅ BACK TO HOME */}
+      {/* CONTENT */}
+      <div style={styles.container}>
+
+        {/* BACK TO HOME */}
         <button style={styles.back} onClick={()=>navigate("/home")}>
           ⬅ Home
         </button>
@@ -37,11 +42,9 @@ export default function Jobs(){
           </button>
         </div>
 
-
         {/* EDUCATION JOBS */}
         {tab==="edu" && (
-          <div>
-
+          <>
             <JobCard 
               title="Agriculture Extension Assistant"
               edu="Diploma / Degree in Agriculture"
@@ -73,15 +76,12 @@ export default function Jobs(){
               pay="₹10,000 – ₹28,000"
               type="Fertilizer / Seed Companies"
             />
-
-          </div>
+          </>
         )}
-
 
         {/* GENERAL JOBS */}
         {tab==="gen" && (
-          <div>
-
+          <>
             <JobCard 
               title="Organic Farming Staff"
               edu="No education required"
@@ -105,10 +105,8 @@ export default function Jobs(){
               pay="₹9,000 – ₹22,000"
               type="Service Centres"
             />
-
-          </div>
+          </>
         )}
-
 
         <div style={styles.note}>
           ⭐ அரசு அறிவிப்பு வந்தால் — பதிவு செய்ய லிங்க் சேர்க்கலாம்  
@@ -119,8 +117,6 @@ export default function Jobs(){
     </div>
   );
 }
-
-
 
 function JobCard({title,edu,age,pay,type}){
   return(
@@ -140,25 +136,40 @@ function JobCard({title,edu,age,pay,type}){
   );
 }
 
-
+/* ================= STYLES ================= */
 
 const styles={
 
-  page:{
-    minHeight:"100vh",
-    background:"#e8ffe9",
+  screen:{
+    position:"fixed",
+    inset:0,
+    backgroundImage:`url(${bgImage})`,
+    backgroundSize:"cover",
+    backgroundPosition:"center",
     display:"flex",
     justifyContent:"center",
-    alignItems:"center"
+    alignItems:"center",
+    overflow:"hidden"
   },
 
-  mobile:{
+  overlay:{
+    position:"absolute",
+    inset:0,
+    background:"rgba(0,100,0,0.6)",
+    zIndex:1
+  },
+
+  container:{
+    position:"relative",
+    zIndex:2,
     width:"100%",
-    maxWidth:420,
-    background:"white",
-    borderRadius:18,
-    padding:15,
-    boxShadow:"0 15px 40px rgba(0,0,0,.15)"
+    maxWidth:600,              // ✅ WEB WIDTH
+    maxHeight:"85vh",
+    overflowY:"auto",
+    background:"rgba(82, 241, 46, 0.95)",
+    borderRadius:24,
+    padding:20,
+    boxShadow:"0 18px 45px rgba(0,0,0,.35)"
   },
 
   back:{
@@ -193,9 +204,9 @@ const styles={
   },
 
   card:{
-    background:"#f6fff6",
-    padding:12,
-    borderRadius:14,
+    background:"#109e10",
+    padding:14,
+    borderRadius:16,
     marginBottom:10,
     border:"1px solid #cdeccd"
   },
@@ -210,7 +221,7 @@ const styles={
   },
 
   note:{
-    marginTop:5,
+    marginTop:8,
     fontSize:12,
     opacity:.7
   }

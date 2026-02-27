@@ -1,9 +1,14 @@
+/* FULL WEB WIDTH ROOT */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  text-align: left; /* IMPORTANT: removes mobile feel */
 }
+
 
 .logo {
   height: 6em;
@@ -33,6 +38,7 @@
   }
 }
 
+
 .card {
   padding: 2em;
 }
@@ -40,3 +46,95 @@
 .read-the-docs {
   color: #888;
 }
+/* =========================
+   WEB APP LAYOUT
+========================= */
+
+
+/* ======================================
+   FORCE WEB LOOK (OVERRIDE ALL PAGES)
+====================================== */
+
+/* Page background */
+/* ===============================
+   FORCE WEB LOOK (GLOBAL FIX)
+================================ */
+
+/* Web background */
+/* =====================================
+   FORCE DESKTOP (LAPTOP) WIDTH
+===================================== */
+
+/* Target every page root */
+/* ===============================
+   FORCE ALL PAGES TO WEB WIDTH
+================================ */
+
+/* ANY page main container */
+.web-wrapper > *,
+.container,
+.page,
+.screen,
+.main,
+.content {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* REMOVE mobile locks */
+.container *,
+.page *,
+.screen * {
+  max-width: none !important;
+}
+
+/* DESKTOP spacing */
+@media (min-width: 768px) {
+  .container,
+  .page,
+  .screen,
+  .main,
+  .content {
+    padding-left: 60px !important;
+    padding-right: 60px !important;
+  }
+}
+/* LANGUAGE PAGE BACKGROUND */
+.language-page {
+  min-height: 100vh;
+  background-image: url("C:\Users\shanmugam\Desktop\Agri-app\farmer-app1\src\assets\agricultureimg.png");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* GREEN OVERLAY */
+.language-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 90, 40, 0.45);
+}
+
+/* BACK BUTTON BOTTOM */
+.language-back {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}
+

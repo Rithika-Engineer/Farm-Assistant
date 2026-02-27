@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../LanguageContext";
+import bgImage from "../assets/agricultureimg.png";
 
 export default function Home(){
 
@@ -21,142 +22,160 @@ export default function Home(){
     setCrop(localStorage.getItem("crop") || "");
   },[]);
 
+  return (
+    <>
+      {/* ✅ FULL SCREEN BACKGROUND IMAGE */}
+      <div style={styles.bg}></div>
 
-  return(
-    <div style={styles.page}>
+      {/* ✅ SCROLLABLE CONTENT */}
+      <div style={styles.content}>
 
-      {/* APP CARD */}
-      <div style={styles.appBox}>
+        <div style={styles.container}>
 
-        {/* TITLE */}
-        <div style={styles.title}>
-          {t ? "விவசாயி உதவியாளர்" : "Farmer Assistant"}
-        </div>
+          <div style={styles.title}>
+            {t ? "விவசாயி உதவியாளர்" : "Farmer Assistant"}
+          </div>
 
-        {/* PROFILE */}
-        <div style={styles.profile}>
-          <h3>{t ? "வணக்கம்" : "Hello"} {farmerName || (t?"விவசாயி":"Farmer")} 🙂</h3>
+          <div style={styles.profile}>
+            <h3>
+              {t ? "வணக்கம்" : "Hello"}{" "}
+              {farmerName || (t ? "விவசாயி" : "Farmer")} 🙂
+            </h3>
+            <p>🏡 {t?"கிராமம்":"Village"} : {village || "-"}</p>
+            <p>🌾 {t?"நில அளவு":"Land Size"} : {land || "-"}</p>
+            <p>🌱 {t?"பயிர்":"Crop"} : {crop || "-"}</p>
 
-          <p>🏡 {t?"கிராமம்":"Village"} : {village || "-"}</p>
-          <p>🌾 {t?"நில அளவு":"Land Size"} : {land || "-"}</p>
-          <p>🌱 {t?"பயிர்":"Crop"} : {crop || "-"}</p>
+            <button style={styles.editBtn} onClick={()=>navigate("/profile")}>
+              {t?"விவரத்தை மாற்ற":"Edit Details"}
+            </button>
+          </div>
 
-          <button style={styles.editBtn} onClick={()=>navigate("/profile")}>
-            {t?"விவரத்தை மாற்ற":"Edit Details"}
+          <div style={styles.grid}>
+            <button style={styles.btn} onClick={()=>navigate("/weather")}>🌥 Weather</button>
+            <button style={styles.btn} onClick={()=>navigate("/natural")}>🌾 Natural</button>
+            <button style={styles.btn} onClick={()=>navigate("/pesticide")}>🪴 Pest</button>
+            <button style={styles.btn} onClick={()=>navigate("/profit")}>💰 Profit</button>
+            <button style={styles.btn} onClick={()=>navigate("/market")}>🏪 Market</button>
+            <button style={styles.btn} onClick={()=>navigate("/schemes")}>📚 Schemes</button>
+            <button style={styles.btn} onClick={()=>navigate("/videos")}>🎥 Videos</button>
+            <button style={styles.btn} onClick={()=>navigate("/jobs")}>👨‍🌾 Jobs</button>
+            <button style={styles.btn} onClick={()=>navigate("/chat")}>🤖 AI</button>
+            <button style={styles.btn} onClick={()=>navigate("/assistant")}>🎙 Voice</button>
+            <button style={styles.btn} onClick={()=>navigate("/cropplanner")}>🌱 Planner</button>
+            <button style={styles.btn} onClick={()=>navigate("/season")}>📅 Season</button>
+          </div>
+
+          <button style={styles.helpBtn} onClick={()=>navigate("/help")}>
+            🆘 Help / Helpline
           </button>
-        </div>
 
-        {/* MENU BUTTON GRID */}
-        <div style={styles.grid}>
-
-          <button style={styles.btn} onClick={()=>navigate("/weather")}>🌥 {t?"வானிலை":"Weather"}</button>
-          <button style={styles.btn} onClick={()=>navigate("/natural")}>🌾 {t?"இயற்கை வேளாண்மை":"Natural Farming"}</button>
-
-          <button style={styles.btn} onClick={()=>navigate("/pesticide")}>🪴 {t?"பூச்சி கட்டுப்பாடு":"Pest Control"}</button>
-          <button style={styles.btn} onClick={()=>navigate("/profit")}>💰 {t?"லாபம் கணக்கு":"Profit Calculator"}</button>
-
-          <button style={styles.btn} onClick={()=>navigate("/market")}>🏪 {t?"சந்தை விலை":"Market Price"}</button>
-          <button style={styles.btn} onClick={()=>navigate("/schemes")}>📚 {t?"அரசு திட்டங்கள்":"Govt Schemes"}</button>
-
-          <button style={styles.btn} onClick={()=>navigate("/videos")}>🎥 {t?"கற்றல் வீடியோ":"Learning Videos"}</button>
-          <button style={styles.btn} onClick={()=>navigate("/jobs")}>👨‍🌾 {t?"வேலை வாய்ப்புகள்":"Job Opportunities"}</button>
-
-          <button style={styles.btn} onClick={()=>navigate("/chat")}>🤖 {t?"AI உதவி":"AI Assistant"}</button>
-          <button style={styles.btn} onClick={()=>navigate("/assistant")}>🎙 {t?"குரல் உதவி":"Voice Assistant"}</button>
-
-          <button style={styles.btn} onClick={()=>navigate("/cropplanner")}>🌱 {t?"பயிர் திட்டம்":"Crop Planner"}</button>
-          <button style={styles.btn} onClick={()=>navigate("/season")}>📅 {t?"பருவ பயிர் வழிகாட்டி":"Season Crop Guide"}</button>
+          <button style={styles.backBtn} onClick={()=>navigate(-1)}>
+            ⬅ {t?"பின்செல்":"Back"}
+          </button>
 
         </div>
-
-        {/* BOTTOM BACK BUTTON */}
-        <button style={styles.bottomBack} onClick={()=>navigate(-1)}>
-          ⬅ {t?"பின்செல்":"Back"}
-        </button>
-
       </div>
-    </div>
+    </>
   );
 }
 
+/* ================= STYLES ================= */
 
+const styles = {
 
-const styles={
-
-  page:{
-    minHeight:"100vh",
-    display:"flex",
-    justifyContent:"center",
-    alignItems:"center",
-    background:"#e8ffe8"
+  /* ✅ FULL SCREEN IMAGE */
+  bg:{
+    position:"fixed",
+    inset:0,
+    backgroundImage:`url(${bgImage})`,
+    backgroundSize:"cover",
+    backgroundPosition:"center",
+    backgroundRepeat:"no-repeat",
+    zIndex:-1,
+    
   },
 
-  appBox:{
+  /* ✅ SCROLL ENABLED */
+  content:{
+    minHeight:"100vh",
+    padding:"20px 0",
+    overflowY:"auto"
+  },
+
+
+  mobile:{
+    position:"relative",
+    zIndex:2,
     width:"100%",
-    maxWidth:"480px",
-    borderRadius:"20px",
-    padding:"15px",
-    boxShadow:"0 15px 35px rgba(0,0,0,.25)",
-    backgroundImage:`url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6")`,
-    backgroundSize:"cover",
-    backgroundPosition:"center"
+    maxWidth:600,
+    height:"85vh",
+    overflowY:"auto",
+    background:"#19b219",
+    borderRadius:22,
+    padding:16,
+    boxShadow:"0 18px 40px rgba(0,0,0,.25)"
   },
 
   title:{
-    background:"rgba(0,120,30,.9)",
+    background:"#0b7a2b",
     color:"white",
-    padding:"12px",
+    padding:12,
     textAlign:"center",
-    borderRadius:"10px",
+    borderRadius:10,
     fontWeight:"bold",
-    fontSize:"20px"
+    fontSize:20
   },
 
   profile:{
-    background:"#29cf3c",
-    marginTop:"12px",
-    padding:"14px",
-    borderRadius:"15px"
+    background:"#0da91f",
+    marginTop:12,
+    padding:14,
+    borderRadius:15
   },
 
   editBtn:{
-    marginTop:"8px",
+    marginTop:8,
     padding:"8px 14px",
-    borderRadius:"8px",
+    borderRadius:8,
     border:"none",
-    color:"white",
-    background:"#0a8d2c"
+    background:"#0a8d2c",
+    color:"white"
   },
 
   grid:{
     display:"grid",
     gridTemplateColumns:"1fr 1fr",
-    gap:"12px",
-    marginTop:"14px"
+    gap:12,
+    marginTop:14
   },
 
   btn:{
-    padding:"10px",
-    borderRadius:"12px",
+    padding:10,
+    borderRadius:12,
     border:"none",
-    background:"#29cf3c",
-    fontWeight:"bold",
-    fontSize:"13px",
-    color:"#000"
+    background:"#179d26",
+    fontWeight:"bold"
   },
 
-  bottomBack:{
-    width:"90%",
-    margin:"18px auto 5px auto",
-    display:"block",
-    padding:"12px",
-    border:"none",
-    borderRadius:"14px",
+  helpBtn:{
+    width:"100%",
+    marginTop:12,
+    padding:12,
+    borderRadius:14,
+    background:"#147914",
+    color:"white",
+    fontWeight:"bold",
+    border:"none"
+  },
+
+  backBtn:{
+    width:"100%",
+    marginTop:14,
+    padding:12,
+    borderRadius:14,
     background:"#0a8d2c",
     color:"white",
     fontWeight:"bold",
-    fontSize:"15px",
-    boxShadow:"0 3px 10px rgba(0,0,0,.25)",
-    cursor:"pointer"
+    border:"none"
   }
 };
