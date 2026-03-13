@@ -1,122 +1,111 @@
 import { useLanguage } from "../LanguageContext";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ChevronRight } from "lucide-react";
 
-/* ✅ WINDOWS PATH NOT USED
-   ✅ PROJECT RELATIVE IMPORT USED */
-import bgImage from "../assets/agricultureimg.png";
+const languages = [
+  { code: "en", native: "English", sub: "English (Indian)", flag: "🇬🇧" },
+  { code: "ta", native: "தமிழ்", sub: "Tamil", flag: "🇮🇳" },
+];
 
 export default function Language() {
-
   const { lang, changeLang } = useLanguage();
   const navigate = useNavigate();
-
-  function tamil() { changeLang("ta"); }
-  function english() { changeLang("en"); }
-  function goNext() { navigate("/profile"); }
-  function goBack() { navigate(-1); }
+  const t = lang === "ta";
 
   return (
-    <div style={styles.screen}>
-
-      <div style={styles.overlay}></div>
-
-      <div style={styles.box}>
-        <h2>
-          {lang === "ta" ? "மொழியை தேர்வு செய்க" : "Select Language"}
-        </h2>
-
-        <button style={styles.btn} onClick={tamil}>தமிழ்</button>
-        <button style={styles.btn} onClick={english}>English</button>
-
-        <p style={{ fontWeight: "bold" }}>
-          {lang === "ta" ? "தேர்ந்தெடுத்த மொழி: தமிழ்" : "Selected: English"}
+    <div style={{
+      minHeight: "100vh", maxWidth: 430, margin: "0 auto",
+      background: "var(--color-bg)",
+      display: "flex", flexDirection: "column",
+      padding: "60px 24px 40px",
+    }}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        style={{ marginBottom: 32 }}
+      >
+        <h1 style={{ fontSize: 28, fontWeight: 800, color: "#111827", marginBottom: 8 }}>
+          {t ? "மொழியை தேர்வு செய்க" : "Select Language"}
+        </h1>
+        <p style={{ fontSize: 15, color: "#6B7280" }}>
+          {t ? "உங்கள் விருப்பமான மொழியை தேர்வு செய்யுங்கள்" : "Choose your preferred language to continue"}
         </p>
+      </motion.div>
 
-        <button style={styles.next} onClick={goNext}>
-          {lang === "ta" ? "தொடரவும்" : "Continue"}
-        </button>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
+        {languages.map(({ code, native, sub, flag }, i) => {
+          const selected = lang === code;
+          return (
+            <motion.button
+              key={code}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 + i * 0.08, duration: 0.4 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => changeLang(code)}
+              style={{
+                padding: "18px 18px",
+                borderRadius: 20,
+                border: selected ? "none" : "1.5px solid #E5E7EB",
+                background: selected
+                  ? "linear-gradient(135deg, #2F80ED, #27AE60)"
+                  : "#fff",
+                cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 14,
+                boxShadow: selected
+                  ? "0 8px 28px rgba(47,128,237,0.35)"
+                  : "0 2px 8px rgba(0,0,0,0.05)",
+                textAlign: "left",
+              }}
+            >
+              <span style={{ fontSize: 32 }}>{flag}</span>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 18, fontWeight: 700, color: selected ? "#fff" : "#111827", marginBottom: 2 }}>
+                  {native}
+                </p>
+                <p style={{ fontSize: 13, color: selected ? "rgba(255,255,255,0.75)" : "#6B7280" }}>
+                  {sub}
+                </p>
+              </div>
+              {selected && (
+                <div style={{
+                  width: 24, height: 24, borderRadius: "50%",
+                  background: "rgba(255,255,255,0.3)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <span style={{ color: "#fff", fontSize: 14 }}>✓</span>
+                </div>
+              )}
+            </motion.button>
+          );
+        })}
       </div>
 
-      <button style={styles.backBtn} onClick={goBack}>
-        ← Back
-      </button>
-
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35 }}
+        style={{ marginTop: 32 }}
+      >
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          onClick={() => navigate("/profile")}
+          style={{
+            width: "100%", padding: "16px 20px",
+            borderRadius: 18, border: "none",
+            background: "linear-gradient(135deg, #2F80ED, #27AE60)",
+            color: "#fff", fontWeight: 700, fontSize: 16,
+            cursor: "pointer",
+            boxShadow: "0 6px 20px rgba(47,128,237,0.35)",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+          }}
+        >
+          {t ? "தொடரவும்" : "Continue"}
+          <ChevronRight size={18} strokeWidth={2.5} />
+        </motion.button>
+      </motion.div>
     </div>
   );
 }
-
-/* ================= STYLES ================= */
-
-const styles = {
-
-  /* ✅ BACKGROUND IMAGE SET HERE */
-  screen: {
-  width: "100vw",          // ✅ full desktop width
-  height: "100vh",         // ✅ full desktop height
-
-  backgroundImage: `url(${bgImage})`,
-  backgroundSize: "cover", // fill screen
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "center center",
-
-  position: "fixed",       // ✅ IMPORTANT
-  top: 0,
-  left: 0,
-
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-}
-,
-
-  overlay: {
-    position: "absolute",
-    inset: 0,
-    background: "rgba(0, 90, 40, 0.45)",
-    zIndex: 1
-  },
-
-  box: {
-    position: "relative",
-    zIndex: 2,
-    background: "#57f581ff",
-    padding: 22,
-    borderRadius: 18,
-    width: 380,
-    textAlign: "center",
-    boxShadow: "0 12px 30px rgba(0,0,0,.35)"
-  },
-
-  btn: {
-    width: "100%",
-    padding: 12,
-    marginBottom: 10,
-    borderRadius: 12,
-    fontWeight: "bold",
-    background: "rgb(14, 130, 45)"
-  },
-
-  next: {
-    width: "100%",
-    padding: 12,
-    marginTop: 10,
-    borderRadius: 12,
-    fontWeight: "bold",
-    background: "rgb(12, 130, 43)",
-    color: "white"
-  },
-
-  backBtn: {
-    position: "fixed",
-    bottom: 100,
-    left: "50%",
-    transform: "translateX(-50%)",
-    padding: "10px 22px",
-    borderRadius: 24,
-    border: "none",
-    fontWeight: "bold",
-    background: "white",
-    cursor: "pointer",
-    zIndex: 3
-  }
-};

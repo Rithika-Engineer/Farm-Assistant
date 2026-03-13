@@ -1,207 +1,229 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLanguage } from "../LanguageContext";
-import BottomNav from "../components/BottomNav";
-import { useNavigate } from "react-router-dom";
-import bgImage from "../assets/image copy 5.png";
+import { motion, AnimatePresence } from "framer-motion";
+import Layout from "../components/Layout";
+import { Search, Bug, Leaf, AlertTriangle } from "lucide-react";
+
+const pests = [
+  {
+    nameEn: "Stem Borer",
+    nameTa: "தண்டு துளைப்பான்",
+    emoji: "🐛",
+    symptoms: "Dead heart in young plants, white ear in mature plants",
+    symptomsTa: "இளம் தாவரங்களில் இறந்த மையம், முதிர்ந்தவற்றில் வெள்ளை கதிர்",
+    treatment: "Apply Carbofuran 3G or use light traps",
+    treatmentTa: "கார்போஃபுரான் 3G தெளி அல்லது ஒளி பொறி வைக்கவும்",
+    severity: "high",
+    crop: "Paddy",
+  },
+  {
+    nameEn: "Aphids",
+    nameTa: "அட்டைப் பூச்சி",
+    emoji: "🪲",
+    symptoms: "Curling of leaves, sticky honeydew, sooty mold",
+    symptomsTa: "இலைகள் சுருண்டல், பிசுக்கு, கறுப்பு அச்சு",
+    treatment: "Spray neem oil (5ml/L) or release ladybird beetles",
+    treatmentTa: "வேம்பெண்ணெய் 5ml/L தெளி அல்லது முட்டைக்கோஸ் வண்டுகளை விடவும்",
+    severity: "medium",
+    crop: "Vegetables",
+  },
+  {
+    nameEn: "Fall Armyworm",
+    nameTa: "வீழ்ச்சி படையெடுப்பு புழு",
+    emoji: "🐌",
+    symptoms: "Irregular windowing of leaves, frass presence",
+    symptomsTa: "இலைகளில் ஒழுங்கற்ற துளைகள், மலம் காணப்படும்",
+    treatment: "Apply Spinetoram or Spinosad. Use pheromone traps",
+    treatmentTa: "ஸ்பின்டோரம் அல்லது ஸ்பினோசாட் தெளி. ஃபெரோமோன் பொறி வையுங்கள்",
+    severity: "high",
+    crop: "Maize",
+  },
+  {
+    nameEn: "Whitefly",
+    nameTa: "வெள்ளை ஈ",
+    emoji: "🦟",
+    symptoms: "Yellowing of leaves, sticky substance under leaf",
+    symptomsTa: "இலை மஞ்சளாவது, இலை அடியில் பிசுக்கு",
+    treatment: "Yellow sticky traps + neem extract spray",
+    treatmentTa: "மஞ்சள் ஒட்டும் பொறி + வேம்பெண்ணெய் தெளி",
+    severity: "medium",
+    crop: "Cotton",
+  },
+  {
+    nameEn: "Leaf Rust",
+    nameTa: "இலை துரு",
+    emoji: "🍂",
+    symptoms: "Orange pustules on leaves, premature defoliation",
+    symptomsTa: "இலைகளில் ஆரஞ்சு நிற கொப்புளங்கள், இலை உதிர்வு",
+    treatment: "Spray Propiconazole 25EC at 0.1%",
+    treatmentTa: "புரோபிகோனசோல் 25EC 0.1% தெளி",
+    severity: "medium",
+    crop: "Wheat",
+  },
+];
+
+const severityConfig = {
+  high: { label: "High Risk", labelTa: "அதிக ஆபத்து", bg: "#FEE2E2", color: "#DC2626", dot: "#EF4444" },
+  medium: { label: "Medium", labelTa: "நடுத்தர", bg: "#FEF9C3", color: "#92400E", dot: "#F59E0B" },
+  low: { label: "Low", labelTa: "குறைவு", bg: "#D1FAE5", color: "#065F46", dot: "#10B981" },
+};
 
 export default function PestControl() {
-
   const { lang } = useLanguage();
   const t = lang === "ta";
-  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState(null);
 
-  const [pest, setPest] = useState("");
-  const [image, setImage] = useState(null);
-  const [autoDetect, setAutoDetect] = useState("");
-  const [season, setSeason] = useState("");
+  const filtered = pests.filter(p =>
+    (t ? p.nameTa : p.nameEn).toLowerCase().includes(search.toLowerCase()) ||
+    p.crop.toLowerCase().includes(search.toLowerCase())
+  );
 
-  /* 🔊 Voice */
-  function speak(text){
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = t ? "ta-IN" : "en-US";
-    window.speechSynthesis.speak(u);
-  }
+  return (
+    <Layout title={t ? "பூச்சி கட்டுப்பாடு" : "Pest Control"}>
+      <div style={{ padding: "16px 16px 0" }}>
 
-  /* AUTO SEASON */
-  useEffect(()=>{
-    const m = new Date().getMonth()+1;
-    if(m>=6 && m<=10) setSeason("kharif");
-    else if(m>=11 || m<=2) setSeason("rabi");
-    else setSeason("summer");
-  },[]);
+        {/* Search */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ position: "relative", marginBottom: 16 }}>
+          <Search size={16} color="#9CA3AF" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+          <input
+            className="input-field"
+            style={{ paddingLeft: 42 }}
+            placeholder={t ? "பூச்சி அல்லது பயிர் தேட..." : "Search pest or crop..."}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </motion.div>
 
-  /* SEASON DATA */
-  const seasonCalendar = {
-    kharif: t?["தண்டு துளைப்பான்","இலை பூச்சிகள்","பூஞ்சை நோய்"]:["Stem Borer","Leaf Insects","Fungal Disease"],
-    rabi: t?["அஃபிட்ஸ்","திரிப்ஸ்"]:["Aphids","Thrips"],
-    summer: t?["வேர் பூச்சிகள்","திரிப்ஸ்"]:["Root Worms","Thrips"]
-  };
-
-  /* PEST DATA */
-  const data = {
-
-    insects:{
-      name:t?"இலை தின்று பூச்சிகள்":"Leaf Eating Insects",
-      crops:t?"நெல், காய்கறிகள்":"Paddy, Vegetables",
-      img:"https://images.unsplash.com/photo-1592921870957-0e6c87d0d79d",
-      solution:t?"வேம்பெண்ணெய்":"Neem Oil",
-      prepare:t?["5ml வேம்பெண்ணெய்","1L நீர்","2 துளி சோப்பு"]:["5ml neem oil","1L water","2 soap drops"]
-    },
-
-    aphids:{
-      name:t?"அஃபிட்ஸ்":"Aphids",
-      crops:t?"பருத்தி, மிளகாய்":"Cotton, Chilli",
-      img:"https://images.unsplash.com/photo-1506808547685-e2ba962ded58",
-      solution:t?"சோப்பு நீர்":"Soap Water",
-      prepare:t?["10g சோப்பு","1L நீர்"]:["10g soap","1L water"]
-    },
-
-    fungus:{
-      name:t?"பூஞ்சை நோய்":"Fungal Disease",
-      crops:t?"நெல், வாழை":"Paddy, Banana",
-      img:"https://images.unsplash.com/photo-1592924357228-91a6f63a64f4",
-      solution:t?"மோர் தெளிப்பு":"Buttermilk Spray",
-      prepare:t?["1L மோர்","5L நீர்","48 மணி"]:["1L buttermilk","5L water","48 hrs"]
-    },
-
-    stemBorer:{
-      name:t?"தண்டு துளைப்பான்":"Stem Borer",
-      crops:"Paddy",
-      img:"https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
-      solution:t?"வேப்ப விதை சாரம்":"Neem Seed Extract",
-      prepare:t?["50g விதை","1L நீர்","12 மணி"]:["50g seed","1L water","12 hrs"]
-    },
-
-    thrips:{
-      name:t?"திரிப்ஸ்":"Thrips",
-      crops:t?"மிளகாய், வெங்காயம்":"Chilli, Onion",
-      img:"https://images.unsplash.com/photo-1528825871115-3581a5387919",
-      solution:t?"புளி நீர்":"Tamarind Water",
-      prepare:t?["50g புளி","1L நீர்"]:["50g tamarind","1L water"]
-    }
-  };
-
-  function handleImage(e){
-    const f = e.target.files[0];
-    if(f) setImage(URL.createObjectURL(f));
-  }
-
-  function analyzeImage(){
-    if(!image) return alert(t?"படம் பதிவேற்றவும்":"Upload image");
-    setAutoDetect(t?"AI கணிப்பு: பூச்சி":"AI prediction: Pest");
-  }
-
-  return(
-    <div style={styles.screen}>
-
-      <div style={styles.overlay}></div>
-
-      <div style={styles.box}>
-
-        <BottomNav />
-
-        <h2 style={{textAlign:"center"}}>
-          {t?"இயற்கை பூச்சி கட்டுப்பாடு":"Natural Pest Control"}
-        </h2>
-
-        <div style={styles.card}>
-          <h4>{t?"இந்த பருவ பூச்சிகள்":"Season Pests"}</h4>
-          <ul>
-            {seasonCalendar[season]?.map((p,i)=><li key={i}>🐛 {p}</li>)}
-          </ul>
-        </div>
-
-        <div style={styles.card}>
-          <input type="file" accept="image/*" onChange={handleImage}/>
-          {image && <img src={image} style={styles.preview}/>}
-          <button style={styles.btn} onClick={analyzeImage}>
-            {t?"AI கண்டறி":"Analyze"}
-          </button>
-          {autoDetect && <p>{autoDetect}</p>}
-        </div>
-
-        <select style={styles.input} value={pest} onChange={e=>setPest(e.target.value)}>
-          <option value="">{t?"பூச்சி தேர்வு":"Select Pest"}</option>
-          {Object.keys(data).map(k=>(
-            <option key={k} value={k}>{data[k].name}</option>
-          ))}
-        </select>
-
-        {pest && (
-          <div style={styles.card}>
-            <img src={data[pest].img} style={styles.preview}/>
-            <h4>{data[pest].name}</h4>
-            <p>🌾 {data[pest].crops}</p>
-            <p>🌿 {data[pest].solution}</p>
-            <ol>{data[pest].prepare.map((s,i)=><li key={i}>{s}</li>)}</ol>
-
-            <button style={styles.btn} onClick={()=>speak(data[pest].solution)}>
-              🔊 {t?"கேட்க":"Listen"}
-            </button>
+        {/* AI Detect Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          style={{
+            background: "linear-gradient(135deg, #F0FDF4, #EBF4FF)",
+            borderRadius: 18, padding: "14px 16px",
+            marginBottom: 16,
+            border: "1px solid #BFDBFE",
+            display: "flex", alignItems: "center", gap: 12,
+          }}
+        >
+          <div style={{ fontSize: 32 }}>📷</div>
+          <div>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 2 }}>
+              {t ? "AI பூச்சி கண்டறிதல்" : "AI Pest Detection"}
+            </p>
+            <p style={{ fontSize: 12, color: "#6B7280" }}>
+              {t ? "பயிர் படம் எடுத்து AI மூலம் அறிந்துகொள்ளுங்கள்" : "Take a photo of your crop for instant AI diagnosis"}
+            </p>
           </div>
-        )}
+          <motion.button
+            whileTap={{ scale: 0.94 }}
+            style={{
+              flexShrink: 0, padding: "8px 14px",
+              borderRadius: 12, border: "none",
+              background: "linear-gradient(135deg, #2F80ED, #27AE60)",
+              color: "#fff", fontSize: 12, fontWeight: 700,
+              cursor: "pointer",
+              boxShadow: "0 4px 12px rgba(47,128,237,0.3)",
+            }}
+          >
+            {t ? "பயன்படுத்து" : "Use AI"}
+          </motion.button>
+        </motion.div>
+
+        {/* Pest List */}
+        <p style={{ fontSize: 13, fontWeight: 700, color: "#6B7280", marginBottom: 10, textTransform: "uppercase", letterSpacing: 0.4 }}>
+          {t ? "பொதுவான பூச்சிகள்" : "Common Pests"}
+        </p>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {filtered.map((pest, i) => {
+            const sev = severityConfig[pest.severity];
+            const isOpen = selected === i;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06 }}
+                style={{
+                  background: "#fff", borderRadius: 18,
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.07)",
+                  border: isOpen ? "1.5px solid #2F80ED" : "1px solid #E5E7EB",
+                  overflow: "hidden",
+                }}
+              >
+                <button
+                  onClick={() => setSelected(isOpen ? null : i)}
+                  style={{
+                    width: "100%", padding: "14px 16px",
+                    background: "none", border: "none", cursor: "pointer",
+                    display: "flex", alignItems: "center", gap: 12, textAlign: "left",
+                  }}
+                >
+                  <div style={{
+                    width: 46, height: 46, borderRadius: 14,
+                    background: sev.bg,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 22, flexShrink: 0,
+                  }}>
+                    {pest.emoji}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: 14, fontWeight: 700, color: "#111827", marginBottom: 3 }}>
+                      {t ? pest.nameTa : pest.nameEn}
+                    </p>
+                    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                      <span style={{
+                        padding: "2px 8px", borderRadius: 20, fontSize: 10, fontWeight: 700,
+                        background: sev.bg, color: sev.color,
+                      }}>
+                        <span style={{ display: "inline-block", width: 5, height: 5, borderRadius: "50%", background: sev.dot, marginRight: 4 }} />
+                        {t ? sev.labelTa : sev.label}
+                      </span>
+                      <span style={{ fontSize: 11, color: "#9CA3AF" }}>🌾 {pest.crop}</span>
+                    </div>
+                  </div>
+                  <AlertTriangle size={16} color={sev.dot} />
+                </button>
+
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.28 }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <div style={{ padding: "0 16px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
+                        <div style={{ background: "#FFF5F5", borderRadius: 12, padding: "12px" }}>
+                          <p style={{ fontSize: 11, fontWeight: 700, color: "#DC2626", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.3 }}>
+                            ⚠️ {t ? "அறிகுறிகள்" : "Symptoms"}
+                          </p>
+                          <p style={{ fontSize: 13, color: "#374151", lineHeight: 1.5 }}>
+                            {t ? pest.symptomsTa : pest.symptoms}
+                          </p>
+                        </div>
+                        <div style={{ background: "#F0FDF4", borderRadius: 12, padding: "12px" }}>
+                          <p style={{ fontSize: 11, fontWeight: 700, color: "#065F46", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.3 }}>
+                            ✅ {t ? "சிகிச்சை" : "Treatment"}
+                          </p>
+                          <p style={{ fontSize: 13, color: "#374151", lineHeight: 1.5 }}>
+                            {t ? pest.treatmentTa : pest.treatment}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </div>
 
       </div>
-
-      <button style={styles.backBtn} onClick={()=>navigate("/home")}>
-        ← Back
-      </button>
-
-    </div>
+    </Layout>
   );
 }
-
-/* ================= STYLES ================= */
-
-const styles = {
-
-  screen:{
-    width:"100vw",
-    height:"100vh",
-    backgroundImage:`url(${bgImage})`,
-    backgroundSize:"cover",
-    backgroundPosition:"center",
-    position:"fixed",
-    top:0,
-    left:0,
-    display:"flex",
-    justifyContent:"center",
-    alignItems:"center"
-  },
-
-  overlay:{
-    position:"absolute",
-    inset:0,
-    background:"rgba(0,90,40,0.45)",
-    zIndex:1
-  },
-
-  box:{
-    position:"relative",
-    zIndex:2,
-    width:400,
-    maxHeight:"85vh",
-    overflowY:"auto",
-    background:"rgba(18, 165, 21, 0.92)",
-    borderRadius:20,
-    padding:18,
-    boxShadow:"0 12px 30px rgba(0,0,0,.35)"
-  },
-
-  card:{background:"#c0cdc0",padding:12,borderRadius:14,marginBottom:10},
-  input:{width:"100%",padding:10,borderRadius:12,marginBottom:10},
-  preview:{width:"100%",borderRadius:12,marginTop:8},
-  btn:{width:"100%",padding:10,borderRadius:12,background:"#1b5e20",color:"#fff",border:"none",marginTop:8},
-
-  backBtn:{
-    position:"fixed",
-    bottom:30,
-    left:"50%",
-    transform:"translateX(-50%)",
-    padding:"10px 22px",
-    borderRadius:24,
-    background:"white",
-    fontWeight:"bold",
-    zIndex:3
-  }
-};

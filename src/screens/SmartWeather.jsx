@@ -1,228 +1,135 @@
 import { useLanguage } from "../LanguageContext";
-import Header from "../components/Header";
-import BottomNav from "../components/BottomNav";
+import { motion } from "framer-motion";
+import Layout from "../components/Layout";
+import { CloudRain, Wind, ThermometerSun, Sprout, AlertTriangle } from "lucide-react";
 
-export default function SmartWeather(){
-
+export default function SmartWeather() {
   const { lang } = useLanguage();
   const t = lang === "ta";
 
-  return(
-    <div style={{padding:12}}>
+  return (
+    <Layout title={t ? "ஸ்மார்ட் வானிலை அறிவுரை" : "Smart Weather Advice"}>
+      <div style={{ padding: "16px 16px 0" }}>
 
-      <Header title={t ? "ஸ்மார்ட் வானிலை அறிவுரை" : "Smart Weather Advice"} />
-
-      <div style={styles.card}>
-        <h3>{t ? "💧 இன்று பாசனம் தேவையில்லை" : "💧 No Irrigation Needed Today"}</h3>
-        <p>
-          {t 
-           ? "இன்று மழை வாய்ப்பு இருப்பதால் பாசனம் செய்ய வேண்டாம்."
-           : "Rain probability is high today. Avoid irrigation."}
-        </p>
-      </div>
-
-      <div style={styles.card}>
-        <h3>{t ? "🧴 தெளிப்பு தவிர்க்கவும்" : "🧴 Avoid Spraying Today"}</h3>
-        <p>
-          {t 
-           ? "காற்று வேகம் அதிகம். பூச்சி மருந்து தெளிப்பதை ஒத்திவைக்கவும்."
-           : "Wind speed is high. Postpone pesticide spraying."}
-        </p>
-      </div>
-
-      <div style={styles.card}>
-        <h3>{t ? "🌾 அறுவடை கவனமாக" : "🌾 Harvest Carefully"}</h3>
-        <p>
-          {t 
-           ? "அடுத்த 2 நாட்கள் மழை இருக்கலாம். பயிரை பாதுகாக்கவும்."
-           : "Rain expected next 2 days. Protect harvested crops."}
-        </p>
-      </div>
-
-      <div style={styles.cardYellow}>
-        <h3>{t ? "⚠ எச்சரிக்கை" : "⚠ Warning"}</h3>
-        <p>
-          {t 
-           ? "வெப்ப அலை. அதிக வெப்பத்தில் வேலையை குறைக்கவும்."
-           : "Heat alert. Avoid working under strong sunlight."}
-        </p>
-      </div>
-
-      <BottomNav />
-    </div>
-  );
-}
-
-const styles = {
-
-  card:{
-    background:"#e9fff0",
-    padding:14,
-    borderRadius:14,
-    marginBottom:12
-  },
-
-  cardYellow:{
-    background:"#fff3cd",
-    padding:14,
-    borderRadius:14,
-    marginBottom:12
-  }
-};
-
-
-
- /* ================= DATA ================= */
-  const data = {
-
-    paddy:{
-      fert: t?"ஜீவாமிருதம் 5 லிட்டர் / ஏக்கர்":"Jeevamrutham 5L / acre",
-      prep: t
-        ? ["மாட்டு சாணம் + சிறுநீர்","கருப்பட்டி சேர்க்கவும்","24 மணி நேரம் ஊறவிடவும்"]
-        : ["Cow dung + urine","Add jaggery","Ferment 24 hrs"],
-      apply: t?"15 நாட்களுக்கு ஒருமுறை":"Every 15 days",
-      safety: t?"கையுறை அணியவும்":"Wear gloves",
-      benefit: t?"மண் வளம் உயரும்":"Improves soil fertility"
-    },
-
-    banana:{
-      fert: t?"பஞ்சகவ்யம் 3 லிட்டர்":"Panchagavya 3L",
-      prep: t
-        ? ["பால், தயிர் சேர்க்கவும்","7 நாட்கள் ஊறவிடவும்"]
-        : ["Add milk & curd","Ferment 7 days"],
-      apply: t?"20 நாட்களுக்கு ஒருமுறை":"Every 20 days",
-      safety: t?"நிழலில் வைக்கவும்":"Store in shade",
-      benefit: t?"பழ தரம் உயரும்":"Better fruit quality"
-    },
-
-    groundnut:{
-      fert: t?"வெர்மிகம்போஸ்ட்":"Vermicompost",
-      prep: t?["கழிவுகளை குழியில் வைக்கவும்"]:["Put waste in pit"],
-      apply: t?"விதைப்பு முன்":"Before sowing",
-      safety: t?"பூச்சியிலிருந்து பாதுகாப்பு":"Protect from pests",
-      benefit: t?"வேர் வளர்ச்சி":"Better root growth"
-    },
-
-    maize:{
-      fert: t?"பஞ்சகவ்யம்":"Panchagavya",
-      prep: t?["7 நாள் ஊறவிடவும்"]:["Ferment 7 days"],
-      apply: t?"10–15 நாட்கள்":"10–15 days",
-      safety: t?"குழந்தைகள் அருகில் வைக்காதீர்கள்":"Keep away from children",
-      benefit: t?"வளர்ச்சி அதிகம்":"Faster growth"
-    },
-
-    cotton:{
-      fert: t?"ஜீவாமிருதம்":"Jeevamrutham",
-      prep: t?["24 மணி நேரம் ஊறவிடவும்"]:["Ferment 24 hrs"],
-      apply: t?"15 நாட்கள்":"15 days",
-      safety: t?"மூடி வைத்திருங்கள்":"Keep covered",
-      benefit: t?"செலவு குறைவு":"Low cost"
-    },
-
-    sugarcane:{
-      fert: t?"பஞ்சகவ்யம்":"Panchagavya",
-      prep: t?["7 நாள் ஊறவிடவும்"]:["Ferment 7 days"],
-      apply: t?"20 நாட்கள்":"20 days",
-      safety: t?"நேரடி வெயிலில் வைக்காதீர்கள்":"Avoid sunlight",
-      benefit: t?"இனிப்பு அளவு அதிகம்":"Better sweetness"
-    },
-
-    tomato:{
-      fert: t?"ஜீவாமிருதம்":"Jeevamrutham",
-      prep: t?["24 மணி நேரம்"]:["24 hrs"],
-      apply: t?"10 நாட்கள்":"10 days",
-      safety: t?"கையுறை":"Use gloves",
-      benefit: t?"மகசூல் அதிகம்":"High yield"
-    },
-
-    onion:{
-      fert: t?"வெர்மிகம்போஸ்ட்":"Vermicompost",
-      prep: t?["மண்ணில் கலக்கவும்"]:["Mix with soil"],
-      apply: t?"விதைப்பு முன்":"Before sowing",
-      safety: t?"ஈரப்பதம் பராமரிக்கவும்":"Maintain moisture",
-      benefit: t?"கிழங்கு வலிமை":"Strong bulbs"
-    },
-
-    chilli:{
-      fert: t?"பஞ்சகவ்யம்":"Panchagavya",
-      prep: t?["7 நாள்"]:["7 days"],
-      apply: t?"15 நாட்கள்":"15 days",
-      safety: t?"மூக்கு பாதுகாப்பு":"Use mask",
-      benefit: t?"காய் தரம்":"Good quality"
-    },
-
-    pulses:{
-      fert: t?"ஜீவாமிருதம்":"Jeevamrutham",
-      prep: t?["24 மணி"]:["24 hrs"],
-      apply: t?"20 நாட்கள்":"20 days",
-      safety: t?"கையுறை":"Gloves",
-      benefit: t?"நைட்ரஜன் அதிகரிப்பு":"Improves nitrogen"
-    }
-
-  };
-
-  /* ================= UI ================= */
-  return(
-    <div style={styles.page}>
-      <div style={styles.mobile}>
-
-        <BottomNav />
-
-        <h2 style={{textAlign:"center"}}>
-          {t?"இயற்கை வேளாண்மை ஆலோசனை":"Natural Farming Advisor"}
-        </h2>
-
-        <select
-          style={styles.input}
-          value={crop}
-          onChange={e=>setCrop(e.target.value)}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{
+            background: "linear-gradient(135deg, #2F80ED, #27AE60)",
+            borderRadius: 20, padding: "18px",
+            marginBottom: 20, color: "#fff",
+            boxShadow: "0 8px 24px rgba(47,128,237,0.3)"
+          }}
         >
-          <option value="">{t?"பயிரை தேர்வு செய்க":"Select Crop"}</option>
-          {Object.keys(data).map(c=>(
-            <option key={c} value={c}>{c.toUpperCase()}</option>
-          ))}
-        </select>
-
-        {crop && (
-          <>
-            <div style={styles.card}>
-              <h3>🌿 {t?"இயற்கை உரம்":"Organic Fertilizer"}</h3>
-              <p>{data[crop].fert}</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+            <div style={{ fontSize: 32 }}>🤖</div>
+            <div>
+              <p style={{ fontSize: 13, fontWeight: 700, opacity: 0.9, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                {t ? "AI பகுப்பாய்வு" : "AI Analysis"}
+              </p>
+              <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>
+                {t ? "இன்றைய பண்ணை முடிவு" : "Today's Farm Action"}
+              </h2>
             </div>
+          </div>
+          <p style={{ fontSize: 14, opacity: 0.9, lineHeight: 1.5 }}>
+            {t 
+              ? "தற்போதைய வானிலை தரவுகளின் அடிப்படையில் AI கண்டறிந்த முடிவுகள்."
+              : "Decisions generated by AI based on current local weather conditions."}
+          </p>
+        </motion.div>
 
-            <div style={styles.card}>
-              <h3>🧪 {t?"தயாரிப்பு":"Preparation"}</h3>
-              <ul>{data[crop].prep.map((p,i)=><li key={i}>{p}</li>)}</ul>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          
+          <motion.div
+            initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}
+            style={{ background: "#EDFBF1", borderRadius: 18, padding: "16px", border: "1px solid #A7F3D0" }}
+          >
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+              <div style={{ width: 42, height: 42, borderRadius: 12, background: "#D1FAE5", color: "#065F46", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <CloudRain size={24} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: "#065F46", marginBottom: 4 }}>
+                  {t ? "பாசனம் தேவையில்லை" : "No Irrigation Needed"}
+                </h3>
+                <p style={{ fontSize: 13, color: "#047857", lineHeight: 1.5 }}>
+                  {t 
+                   ? "இன்று மழை வாய்ப்பு இருப்பதால் பாசனம் செய்ய வேண்டாம். நீரை சேமிக்கவும்."
+                   : "Rain probability is high today. Avoid irrigation to save water and prevent waterlogging."}
+                </p>
+              </div>
             </div>
+          </motion.div>
 
-            <div style={styles.card}>
-              <h3>📏 {t?"பயன்பாடு":"Usage"}</h3>
-              <p>{data[crop].apply}</p>
+          <motion.div
+            initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}
+            style={{ background: "#FEF9C3", borderRadius: 18, padding: "16px", border: "1px solid #FDE047" }}
+          >
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+              <div style={{ width: 42, height: 42, borderRadius: 12, background: "#FEF08A", color: "#92400E", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Wind size={24} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: "#92400E", marginBottom: 4 }}>
+                  {t ? "தெளிப்பு தவிர்க்கவும்" : "Avoid Spraying"}
+                </h3>
+                <p style={{ fontSize: 13, color: "#854D0E", lineHeight: 1.5 }}>
+                  {t 
+                   ? "காற்று வேகம் அதிகம். பூச்சி மருந்து தெளிப்பதை ஒத்திவைக்கவும்."
+                   : "Wind speed is high today. Postpone pesticide or fertilizer spraying to avoid drift."}
+                </p>
+              </div>
             </div>
+          </motion.div>
 
-            <div style={styles.card}>
-              <h3>⚠ {t?"பாதுகாப்பு":"Safety"}</h3>
-              <p>{data[crop].safety}</p>
+          <motion.div
+            initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
+            style={{ background: "#EBF4FF", borderRadius: 18, padding: "16px", border: "1px solid #BFDBFE" }}
+          >
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+              <div style={{ width: 42, height: 42, borderRadius: 12, background: "#DBEAFE", color: "#1E40AF", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Sprout size={24} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: "#1E40AF", marginBottom: 4 }}>
+                  {t ? "அறுவடை கவனமாக தேவை" : "Harvest Carefully"}
+                </h3>
+                <p style={{ fontSize: 13, color: "#1D4ED8", lineHeight: 1.5 }}>
+                  {t 
+                   ? "அடுத்த 2 நாட்கள் மழை இருக்கலாம். அறுத்த பயிரை பாதுகாப்பாக வைக்கவும்."
+                   : "Rain expected in the next 2 days. Protect any harvested crops immediately."}
+                </p>
+              </div>
             </div>
+          </motion.div>
 
-            <div style={styles.card}>
-              <h3>🌱 {t?"பயன்":"Benefit"}</h3>
-              <p>{data[crop].benefit}</p>
+          <motion.div
+            initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 }}
+            style={{ background: "#FFF5F5", borderRadius: 18, padding: "16px", border: "1px solid #FECACA" }}
+          >
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+              <div style={{ width: 42, height: 42, borderRadius: 12, background: "#FEE2E2", color: "#DC2626", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <ThermometerSun size={24} />
+              </div>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                  <AlertTriangle size={16} color="#DC2626" />
+                  <h3 style={{ fontSize: 15, fontWeight: 700, color: "#DC2626", margin: 0 }}>
+                    {t ? "வெப்ப எச்சரிக்கை" : "Heat Warning"}
+                  </h3>
+                </div>
+                <p style={{ fontSize: 13, color: "#B91C1C", lineHeight: 1.5 }}>
+                  {t 
+                   ? "பிற்பகலில் அதிக வெப்பம். உச்சி வெயிலில் வயல் வேலையை குறைக்கவும்."
+                   : "High temperature in the afternoon. Avoid strenuous field work during peak sunlight hours."}
+                </p>
+              </div>
             </div>
+          </motion.div>
 
-            <div style={styles.card}>
-              <h3>⚖ {t?"இயற்கை vs ரசாயன":"Natural vs Chemical"}</h3>
-              <p>✅ {t?"மண் ஆரோக்கியம் உயரும்":"Improves soil health"}</p>
-              <p>❌ {t?"ரசாயன மீதிப்பாகம் இல்லை":"No chemical residue"}</p>
-            </div>
-          </>
-        )}
-
-        <button style={styles.back} onClick={()=>navigate("/home")}>
-          ⬅ {t?"முகப்பு":"Home"}
-        </button>
-
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 }
